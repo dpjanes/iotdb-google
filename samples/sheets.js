@@ -26,6 +26,7 @@ const _ = require("iotdb-helpers")
 const fs = require("iotdb-fs")
 
 const assert = require("assert")
+const readline = require("readline")
 
 const google = require("googleapis").google
 
@@ -35,6 +36,9 @@ const PATH_TOKEN = "token.json"
 /**
  *  This will read the credentials and make
  *  an OAuth2 client
+ *
+ *  Requires: self.paths.credentials
+ *  Produces: self.client
  */
 const _create_client = _.promise.make((self, done) => {
     assert.ok(self.paths)
@@ -55,7 +59,64 @@ const _create_client = _.promise.make((self, done) => {
 })
 
 /**
- *  Read or fetch a token
+ *  This will prompt a user to go to Google for a code
+ *  that will allow a token to be retieved.
+ *
+ *  When the token is retrieved, it will be writen 
+ *  to the tokens file.
+ *
+ *  Of all the the code here, this is the ugliest because
+ *  we'd probably separate out the writing code, and
+ *  use "token" rather than "json" as the return variable,
+ *  but it's OK here
+ *
+ *  Requires: self.client, self.scopes, self.paths.token
+ *  Produces: self.json
+ */
+const _request_token = _.promise.make((self, done) => {
+    assert.ok(self.client)
+    assert.ok(self.scopes)
+    assert.ok(self.paths.token)
+
+    const authUrl = oAuth2Client.generateAuthUrl({
+        access_type: "offline",
+        scope: self.scopes,
+    });
+
+    console.log("Authorize this app by visiting this url:", authUrl);
+
+    const prompt = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+    })
+    prompt.question("Enter the code from that page here: ", code => {
+        prompt.close()
+
+        self.client.getToken(code, (error, token) => {
+            if (error) {
+                return done(error)
+            }
+
+            _.promise.make(self)
+                .then(_.promise.add({
+                    json: token,
+                    path: self.paths.token,
+                }))
+                .then(fs.write.json)
+                .then(_.promise.log("wrote token", "path"))
+                .then(_.promise.done(done, self, "json"))
+                .catch(done)
+        })
+    })
+});
+
+/**
+ *  Read or fetch a token. Another way we could do this is
+ *  to just do the setCredentials here, and not return a
+ *  token at all.
+ *
+ *  Requires: self.client, self.paths.token
+ *  Produces: self.token
  */
 const _get_token = _.promise.make((self, done) => {
     assert.ok(self.client)
@@ -64,6 +125,7 @@ const _get_token = _.promise.make((self, done) => {
 
     _.promise.make(self)
         .then(fs.read.json.p(PATH_TOKEN, null))
+        .then(_.promise.conditional(sd => !sd.json, _request_token))
         .then(_.promise.done(done, self, "json:token"))
         .catch(done)
 })
@@ -72,6 +134,9 @@ const _get_token = _.promise.make((self, done) => {
  *  Finish setting up OAuth2 client. Note the 
  *  slight Google namespacing issue with the 
  *  word "credentials"
+ *
+ *  Requires: self.client, self.token
+ *  Produces: self.client
  */
 const _set_client_token = _.promise.make(self => {
     assert.ok(self.client)
@@ -82,6 +147,9 @@ const _set_client_token = _.promise.make(self => {
 
 /**
  *  This connects to Google Sheets using the client
+ *
+ *  Requires: self.client
+ *  Produces: self.sheets
  */
 const _connect_to_sheets = _.promise.make(self => {
     assert.ok(self.client)
@@ -94,6 +162,9 @@ const _connect_to_sheets = _.promise.make(self => {
 
 /**
  *  This will list the majors from a spreadsheet
+ *
+ *  Requires: self.sheets
+ *  Produces: self.jsons
  */
 const _list_majors = _.promise.make((self, done) => {
     assert.ok(self.sheets)
@@ -132,6 +203,9 @@ if (require.main === module) {
             credentials: "credentials.json",
             token: "token.json",
         },
+        scopes: [
+            "https://www.googleapis.com/auth/spreadsheets.readonly",
+        ],
     })
         .then(_create_client)
         .then(_get_token)
