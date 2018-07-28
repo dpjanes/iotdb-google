@@ -116,9 +116,14 @@ const _list_majors = _.promise.make((self, done) => {
 })
 
 /**
- *  Demonstrate how to connect to Sheets using the POP way
+ *  Demonstrate how to connect to Sheets using the POP way.
+ *  Note however this doesn't use the iotdb-sheets library,
+ *  which makes this even easier
  *  
  *  Original horrible way here:
+ *  https://github.com/gsuitedevs/node-samples/blob/master/sheets/quickstart/index.js
+ *
+ *  Basically follow setup instructions here:
  *  https://developers.google.com/sheets/api/quickstart/nodejs
  */
 if (require.main === module) {
