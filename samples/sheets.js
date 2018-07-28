@@ -59,22 +59,12 @@ const _create_client = _.promise.make((self, done) => {
  *  This will prompt a user to go to Google for a code
  *  that will allow a token to be retieved.
  *
- *  When the token is retrieved, it will be writen 
- *  to the tokens file.
- *
- *  Of all the the code here, this is the ugliest because
- *  we'd probably separate out the writing code, and
- *  use "token" rather than "json" as the return variable,
- *  but it's OK here
- *
- *  Requires: self.client, self.scopes, self.paths.token
+ *  Requires: self.client, self.scopes
  *  Produces: self.json
  */
 const _interactive_token_request = _.promise.make((self, done) => {
     assert.ok(self.client)
     assert.ok(_.is.Array.of.String(self.scopes))
-    assert.ok(self.paths)
-    assert.ok(_.is.String(self.paths.token))
 
     const auth_url = self.client.generateAuthUrl({
         access_type: "offline",
@@ -95,21 +85,16 @@ const _interactive_token_request = _.promise.make((self, done) => {
                 return done(error)
             }
 
-            _.promise.make(self)
-                .then(_.promise.add({
-                    json: token,
-                    path: self.paths.token,
-                }))
-                .then(fs.write.json)
-                .then(_.promise.log("wrote token", "path"))
-                .then(_.promise.done(done, self, "json"))
-                .catch(done)
+            self.json = token
+
+            done(null, self)
         })
     })
 });
 
 /**
  *  Read or fetch a token and add to the OAuth2 client.
+ *  If a token is fetched, it is written to desk
  *
  *  Requires: self.client, self.paths.token
  *  Produces: N/A
@@ -120,8 +105,18 @@ const _attach_token = _.promise.make((self, done) => {
     assert.ok(_.is.String(self.paths.token))
 
     _.promise.make(self)
-        .then(fs.read.json.p(self.paths.token, null))
-        .then(_.promise.conditional(sd => !sd.json, _interactive_token_request))
+        .then(_.promise.add(sd => ({
+            path: self.paths.token,
+            otherwise: null,
+        })))
+        .then(fs.read.json)
+        .then(_.promise.bail.conditional(sd => sd.json))
+
+        .then(_interactive_token_request)
+        .then(fs.write.json)
+        .then(_.promise.log("wrote token", "path"))
+
+        .catch(_.promise.unbail)
         .then(_.promise.make(sd => {
             sd.client.setCredentials(sd.json)
         }))
