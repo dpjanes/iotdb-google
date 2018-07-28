@@ -70,7 +70,7 @@ const _create_client = _.promise.make((self, done) => {
  *  Requires: self.client, self.scopes, self.paths.token
  *  Produces: self.json
  */
-const _request_token = _.promise.make((self, done) => {
+const _interactive_token_request = _.promise.make((self, done) => {
     assert.ok(self.client)
     assert.ok(self.scopes)
     assert.ok(self.paths.token)
@@ -108,38 +108,24 @@ const _request_token = _.promise.make((self, done) => {
 });
 
 /**
- *  Read or fetch a token. Another way we could do this is
- *  to just do the setCredentials here, and not return a
- *  token at all.
+ *  Read or fetch a token and add to the OAuth2 client.
  *
  *  Requires: self.client, self.paths.token
- *  Produces: self.token
+ *  Produces: N/A
  */
-const _get_token = _.promise.make((self, done) => {
+const _attach_token = _.promise.make((self, done) => {
     assert.ok(self.client)
     assert.ok(self.paths)
     assert.ok(_.is.String(self.paths.token))
 
     _.promise.make(self)
         .then(fs.read.json.p(self.paths.token, null))
-        .then(_.promise.conditional(sd => !sd.json, _request_token))
-        .then(_.promise.done(done, self, "json:token"))
+        .then(_.promise.conditional(sd => !sd.json, _interactive_token_request))
+        .then(_.promise.make(sd => {
+            sd.client.setCredentials(sd.json)
+        }))
+        .then(_.promise.done(done, self))
         .catch(done)
-})
-
-/**
- *  Finish setting up OAuth2 client. Note the 
- *  slight Google namespacing issue with the 
- *  word "credentials"
- *
- *  Requires: self.client, self.token
- *  Produces: self.client
- */
-const _set_client_token = _.promise.make(self => {
-    assert.ok(self.client)
-    assert.ok(self.token)
-
-    self.client.setCredentials(self.token)
 })
 
 /**
@@ -205,8 +191,7 @@ if (require.main === module) {
         ],
     })
         .then(_create_client)
-        .then(_get_token)
-        .then(_set_client_token)
+        .then(_attach_token)
         .then(_connect_to_sheets)
         .then(_list_majors)
         .then(_.promise.make(sd => {
