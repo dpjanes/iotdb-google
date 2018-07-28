@@ -30,12 +30,8 @@ const readline = require("readline")
 
 const google = require("googleapis").google
 
-const PATH_CREDENTIALS = "credentials.json"
-const PATH_TOKEN = "token.json"
-
 /**
- *  This will read the credentials and make
- *  an OAuth2 client
+ *  This will read the credentials and make an OAuth2 client
  *
  *  Requires: self.paths.credentials
  *  Produces: self.client
@@ -45,7 +41,7 @@ const _create_client = _.promise.make((self, done) => {
     assert.ok(_.is.String(self.paths.credentials))
 
     _.promise.make(self)
-        .then(fs.read.json.p(PATH_CREDENTIALS))
+        .then(fs.read.json.p(self.paths.credentials))
         .then(_.promise.make(sd => {
             sd.credentials = sd.json.installed
             sd.client = new google.auth.OAuth2(
@@ -124,7 +120,7 @@ const _get_token = _.promise.make((self, done) => {
     assert.ok(_.is.String(self.paths.token))
 
     _.promise.make(self)
-        .then(fs.read.json.p(PATH_TOKEN, null))
+        .then(fs.read.json.p(self.paths.token, null))
         .then(_.promise.conditional(sd => !sd.json, _request_token))
         .then(_.promise.done(done, self, "json:token"))
         .catch(done)
