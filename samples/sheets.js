@@ -43,11 +43,12 @@ const _create_client = _.promise.make((self, done) => {
     _.promise.make(self)
         .then(fs.read.json.p(self.paths.credentials))
         .then(_.promise.make(sd => {
-            sd.credentials = sd.json.installed
+            const credentials = sd.json.installed
+
             sd.client = new google.auth.OAuth2(
-                sd.credentials.client_id, 
-                sd.credentials.client_secret, 
-                sd.credentials.redirect_uris[0]
+                credentials.client_id, 
+                credentials.client_secret, 
+                credentials.redirect_uris[0]
             )
         }))
         .then(_.promise.done(done, self, "client"))
@@ -74,12 +75,12 @@ const _request_token = _.promise.make((self, done) => {
     assert.ok(self.scopes)
     assert.ok(self.paths.token)
 
-    const authUrl = oAuth2Client.generateAuthUrl({
+    const auth_url = oAuth2Client.generateAuthUrl({
         access_type: "offline",
         scope: self.scopes,
     });
 
-    console.log("Authorize this app by visiting this url:", authUrl);
+    console.log("Authorize this app by visiting this url:", auth_url);
 
     const prompt = readline.createInterface({
         input: process.stdin,
