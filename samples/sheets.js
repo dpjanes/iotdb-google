@@ -76,7 +76,7 @@ const _interactive_token_request = _.promise.make((self, done) => {
     assert.ok(self.paths)
     assert.ok(_.is.String(self.paths.token))
 
-    const auth_url = oAuth2Client.generateAuthUrl({
+    const auth_url = self.client.generateAuthUrl({
         access_type: "offline",
         scope: self.scopes,
     });
