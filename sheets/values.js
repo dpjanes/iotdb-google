@@ -31,8 +31,7 @@ const assert = require("assert")
  *  Produces: self.jsons, self.google_result
  */
 const values = _.promise.make((self, done) => {
-    const method = "values";
-    const google = require("googleapis").google
+    const method = "sheets.values";
 
     assert.ok(self.query, `${method}: expected self.query`)
     assert.ok(self.google, `${method}: expected self.google`)

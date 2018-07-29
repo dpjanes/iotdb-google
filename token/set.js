@@ -1,9 +1,9 @@
 /*
- *  sheets/initialize.js
+ *  token/set.js
  *
  *  David Janes
  *  IOTDB.org
- *  2018-07-29
+ *  2018-07-28
  *
  *  Copyright [2013-2018] [David P. Janes]
  *
@@ -24,27 +24,28 @@
 
 const _ = require("iotdb-helpers")
 
+const google = require("googleapis")
+
 const assert = require("assert")
 
 /**
- *  Requires: self.google
+ *  Requires: self.google.client, self.googled.credentials
  *  Produces: self.google
  */
-const initialize = _.promise.make(self => {
-    const method = "sheets.initialize";
-    const google = require("googleapis").google
+const set = _.promise.make((self, done) => {
+    const method = "initialize";
 
     assert.ok(self.google, `${method}: expected self.google`)
     assert.ok(self.google.client, `${method}: expected self.google.client`)
+    assert.ok(self.googled, `${method}: expected self.googled`)
+    assert.ok(self.googled.token, `${method}: expected self.googled.token`)
 
-    self.google = _.d.clone(self.google)
-    self.google.sheets = google.sheets({
-        version: "v4",
-        auth: self.google.client
-    });
+    self.google.client.setCredentials(self.googled.token)
+
+    done(null, self)
 })
 
 /**
  *  API
  */
-exports.initialize = initialize;
+exports.set = set;

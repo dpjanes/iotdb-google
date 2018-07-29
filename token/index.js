@@ -1,9 +1,9 @@
 /*
- *  sheets/index.js
+ *  token/index.js
  *
  *  David Janes
  *  IOTDB.org
- *  2018-07-29
+ *  2018-07-28
  *
  *  Copyright [2013-2018] [David P. Janes]
  *
@@ -24,8 +24,6 @@
 
 module.exports = Object.assign(
     {},
-    require("./initialize"),
-    require("./headers"),
-    require("./values"),
+    require("./set"),
     {}
 )
