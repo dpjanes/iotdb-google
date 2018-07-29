@@ -24,8 +24,6 @@
 
 const _ = require("iotdb-helpers")
 
-const google = require("googleapis")
-
 const assert = require("assert")
 
 /**
@@ -34,21 +32,25 @@ const assert = require("assert")
  */
 const initialize = _.promise.make((self, done) => {
     const method = "initialize";
+    const google = require("googleapis").google
 
     assert.ok(self.googled, `${method}: expected self.googled`)
+    assert.ok(self.googled.credentials, `${method}: expected self.googled.credentials`)
 
-    done(null, self)
-    /*
-    google.createConnection(self.googled, (error, client) => {
-        if (error) {
-            return done(error)
-        }
+    _.promise.make(self)
+        .then(_.promise.make(sd => {
+            const credentials = self.googled.credentials.installed
 
-        self.google = client;
-
-        done(null, self)
-    })
-    */
+            sd.google = {
+                client: new google.auth.OAuth2(
+                    credentials.client_id, 
+                    credentials.client_secret, 
+                    credentials.redirect_uris[0]
+                ),
+            }
+        }))
+        .then(_.promise.done(done, self, "google"))
+        .catch(done)
 })
 
 /**

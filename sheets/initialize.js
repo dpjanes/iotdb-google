@@ -3,7 +3,7 @@
  *
  *  David Janes
  *  IOTDB.org
- *  2018-07-28
+ *  2018-07-29
  *
  *  Copyright [2013-2018] [David P. Janes]
  *
@@ -24,20 +24,24 @@
 
 const _ = require("iotdb-helpers")
 
-const google = require("googleapis")
-
 const assert = require("assert")
 
 /**
  *  Requires: self.google
  *  Produces: self.google
  */
-const initialize = _.promise.make((self, done) => {
+const initialize = _.promise.make(self => {
     const method = "initialize";
+    const google = require("googleapis").google
 
     assert.ok(self.google, `${method}: expected self.google`)
+    assert.ok(self.google.client, `${method}: expected self.google.client`)
 
-    done(null, self)
+    self.google = _.d.clone(self.google)
+    self.google.sheets = google.sheets({
+        version: "v4",
+        auth: self.google.client
+    });
 })
 
 /**

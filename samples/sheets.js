@@ -140,7 +140,7 @@ const _connect_to_sheets = _.promise.make(self => {
 })
 
 /**
- *  This will list the majors from a spreadsheet
+ *  This will list the students from a spreadsheet
  *
  *  Requires: self.sheets
  *  Produces: self.jsons
@@ -167,7 +167,7 @@ const _list_majors = _.promise.make((self, done) => {
 
 /**
  *  Demonstrate how to connect to Sheets using the POP way.
- *  Note however this doesn't use the iotdb-sheets library,
+ *  Note however this doesn't use the iotdb-google library,
  *  which makes this even easier
  *  
  *  Original horrible way here:

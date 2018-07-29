@@ -3,7 +3,7 @@
  *
  *  David Janes
  *  IOTDB.org
- *  2018-07-28
+ *  2018-07-29
  *
  *  Copyright [2013-2018] [David P. Janes]
  *
@@ -25,5 +25,6 @@
 module.exports = Object.assign(
     {},
     require("./initialize"),
+    require("./values"),
     {}
 )
