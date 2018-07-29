@@ -44,6 +44,7 @@ const _read_token = _.promise.make((self, done) => {
 const _write_token = _.promise.make((self, done) => {
     _.promise.make(self)
         .then(fs.write.json.p(self.paths.token, self.token))
+        .then(_.promise.done(done, self))
         .catch(done)
 })
 
