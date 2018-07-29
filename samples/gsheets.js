@@ -30,6 +30,43 @@ const readline = require("readline")
 
 const google = require("..")
 
+/**
+ */
+const _read_token = _.promise.make((self, done) => {
+    _.promise.make(self)
+        .then(fs.read.json.p(self.paths.token, null))
+        .then(_.promise.done(done, self, "json:token"))
+        .catch(done)
+})
+
+/**
+ */
+const _write_token = _.promise.make((self, done) => {
+    _.promise.make(self)
+        .then(fs.write.json.p(self.paths.token, self.token))
+        .catch(done)
+})
+
+/**
+ */
+const _request_token_code = _.promise.make((self, done) => {
+    const auth_url = self.google.client.generateAuthUrl({
+        access_type: "offline",
+        scope: self.scopes,
+    });
+
+    console.log("Authorize this app by visiting this url:", auth_url);
+
+    const prompt = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+    })
+    prompt.question("Enter the code from that page here: ", code => {
+        self.code = code
+
+        done(null, self)
+    })
+})
 
 if (require.main === module) {
     let token = null
@@ -39,6 +76,9 @@ if (require.main === module) {
     }
 
     _.promise.make({
+        paths: {
+            token: "token.json",
+        },
         scopes: [
             "https://www.googleapis.com/auth/spreadsheets.readonly",
         ],
@@ -48,7 +88,11 @@ if (require.main === module) {
         },
     })
         .then(google.initialize)
-        .then(google.token.set)
+        .then(google.token.interactive({
+            read: _read_token,
+            write: _write_token,
+            prompt: _request_token_code,
+        }))
         .then(google.sheets.initialize)
         .then(google.sheets.values.p({
             spreadsheetId: "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms",
