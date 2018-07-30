@@ -37,10 +37,9 @@ const token = _.promise.make((self, done) => {
 
     assert.ok(self.google, `${method}: expected self.google`)
     assert.ok(self.google.client, `${method}: expected self.google.client`)
-    assert.ok(self.googled, `${method}: expected self.googled`)
-    assert.ok(self.googled.token, `${method}: expected self.googled.token`)
+    assert.ok(self.token, `${method}: expected self.token`)
 
-    self.google.client.setCredentials(self.googled.token)
+    self.google.client.setCredentials(self.token)
 
     done(null, self)
 })
