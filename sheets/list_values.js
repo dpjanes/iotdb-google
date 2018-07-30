@@ -1,5 +1,5 @@
 /*
- *  sheets/values.js
+ *  sheets/list_values.js
  *
  *  David Janes
  *  IOTDB.org
@@ -20,7 +20,7 @@
  *  limitations under the License.
  */
 
-"use strict";
+"use strict"
 
 const _ = require("iotdb-helpers")
 
@@ -30,8 +30,8 @@ const assert = require("assert")
  *  Requires: self.google.sheets
  *  Produces: self.jsons, self.google_result
  */
-const values = _.promise.make((self, done) => {
-    const method = "sheets.values";
+const list_values = _.promise.make((self, done) => {
+    const method = "sheets.list_values";
 
     assert.ok(self.query, `${method}: expected self.query`)
     assert.ok(self.google, `${method}: expected self.google`)
@@ -44,7 +44,6 @@ const values = _.promise.make((self, done) => {
         
         self.google_result = result
         self.jsons = result.data.values
-            // .map(row => _.object([ "name", "gender", "year", "state", "major" ], row))
         
         done(null, self)
     })
@@ -56,7 +55,7 @@ const values = _.promise.make((self, done) => {
 const parameterized = query => _.promise.make((self, done) => {
     _.promise.make(self)
         .then(_.promise.add("query", query))
-        .then(values)
+        .then(list_values)
         .then(_.promise.done(done, self, "jsons,google_result"))
         .catch(done)
 })
@@ -64,5 +63,5 @@ const parameterized = query => _.promise.make((self, done) => {
 /**
  *  API
  */
-exports.values = values;
-exports.values.p = parameterized
+exports.list_values = list_values;
+exports.list_values.p = parameterized

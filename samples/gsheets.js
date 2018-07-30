@@ -34,7 +34,7 @@ const google = require("..")
  */
 const _read_token = _.promise.make((self, done) => {
     _.promise.make(self)
-        .then(fs.read.json.p(self.paths.token, null))
+        .then(fs.read.json.p(self.token_path, null))
         .then(_.promise.done(done, self, "json:token"))
         .catch(done)
 })
@@ -43,7 +43,7 @@ const _read_token = _.promise.make((self, done) => {
  */
 const _write_token = _.promise.make((self, done) => {
     _.promise.make(self)
-        .then(fs.write.json.p(self.paths.token, self.token))
+        .then(fs.write.json.p(self.token_path, self.token))
         .then(_.promise.done(done, self))
         .catch(done)
 })
@@ -73,9 +73,7 @@ const _request_token_code = _.promise.make((self, done) => {
 
 if (require.main === module) {
     _.promise.make({
-        paths: {
-            token: "token.json",
-        },
+        token_path: "./token.json",
         scopes: [
             "https://www.googleapis.com/auth/spreadsheets.readonly",
         ],
@@ -90,13 +88,13 @@ if (require.main === module) {
             prompt: _request_token_code,
         }))
         .then(google.sheets.initialize)
-        .then(google.sheets.values.p({
+        .then(google.sheets.list_values.p({
             spreadsheetId: "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms",
             range: "Class Data!A1:E",
         }))
         .then(google.sheets.headers.first)
         .then(_.promise.make(sd => {
-            // console.log("+", JSON.stringify(sd.jsons, null, 2))
+            console.log("+", JSON.stringify(sd.jsons, null, 2))
         }))
         .catch(error => {
             delete error.self

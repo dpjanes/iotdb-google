@@ -26,6 +26,6 @@ module.exports = Object.assign(
     {},
     require("./initialize"),
     require("./headers"),
-    require("./values"),
+    require("./list_values"),
     {}
 )
