@@ -72,12 +72,6 @@ const _request_token_code = _.promise.make((self, done) => {
 })
 
 if (require.main === module) {
-    let token = null
-    try {
-        token = require("./token")
-    } catch (x) {
-    }
-
     _.promise.make({
         paths: {
             token: "token.json",
@@ -87,11 +81,10 @@ if (require.main === module) {
         ],
         googled: {
             credentials: require("./credentials.json"),
-            token: token,
         },
     })
         .then(google.initialize)
-        .then(google.token.interactive({
+        .then(google.auth.interactive({
             read: _read_token,
             write: _write_token,
             prompt: _request_token_code,

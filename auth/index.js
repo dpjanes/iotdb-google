@@ -1,5 +1,5 @@
 /*
- *  token/index.js
+ *  auth/index.js
  *
  *  David Janes
  *  IOTDB.org
@@ -20,11 +20,11 @@
  *  limitations under the License.
  */
 
-"use strict";
+"use strict"
 
 module.exports = Object.assign(
     {},
-    require("./set"),
+    require("./token"),
     require("./interactive"),
     {}
 )

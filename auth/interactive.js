@@ -1,5 +1,5 @@
 /*
- *  token/interactive.js
+ *  auth/interactive.js
  *
  *  David Janes
  *  IOTDB.org
@@ -33,7 +33,7 @@ const logger = require("../logger")(__filename)
  *  exchanges it for a token
  */
 const _handle_code = _.promise.make((self, done) => {
-    const method = "token.interactive/_handle_code";
+    const method = "auth.interactive/_handle_code";
 
     assert.ok(self.code, `${method}: expected self.code after rules.prompt`)
 
@@ -52,7 +52,7 @@ const _handle_code = _.promise.make((self, done) => {
  *  Called when token refreshed (typically a 1 hour lifespan)
  */
 const _handle_token_refresh = rules => _.promise.make(self => {
-    const method = "token.interactive/_handle_token_refresh"
+    const method = "auth.interactive/_handle_token_refresh"
 
     self.google.client.on("tokens", (tokens) => {
         assert.ok(_.is.Object(tokens), `${method}: expected on(tokens) to create Object`)

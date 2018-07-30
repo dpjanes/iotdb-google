@@ -24,5 +24,5 @@
 
 exports.initialize = require("./initialize").initialize
 
-exports.token = require("./token")
+exports.auth = require("./auth")
 exports.sheets = require("./sheets")

@@ -1,5 +1,5 @@
 /*
- *  token/set.js
+ *  auth/token.js
  *
  *  David Janes
  *  IOTDB.org
@@ -32,8 +32,8 @@ const assert = require("assert")
  *  Requires: self.google.client, self.googled.credentials
  *  Produces: self.google
  */
-const set = _.promise.make((self, done) => {
-    const method = "initialize";
+const token = _.promise.make((self, done) => {
+    const method = "auth.token";
 
     assert.ok(self.google, `${method}: expected self.google`)
     assert.ok(self.google.client, `${method}: expected self.google.client`)
@@ -48,4 +48,4 @@ const set = _.promise.make((self, done) => {
 /**
  *  API
  */
-exports.set = set;
+exports.token = token;
