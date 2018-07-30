@@ -103,7 +103,7 @@ if (require.main === module) {
         }))
         .then(google.sheets.headers.first)
         .then(_.promise.make(sd => {
-            console.log("+", JSON.stringify(sd.jsons, null, 2))
+            // console.log("+", JSON.stringify(sd.jsons, null, 2))
         }))
         .catch(error => {
             delete error.self

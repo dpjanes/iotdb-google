@@ -26,7 +26,11 @@ const _ = require("iotdb-helpers")
 
 const assert = require("assert")
 
+const logger = require("../logger")(__filename)
+
 /**
+ *  When the user code returns a code, this
+ *  exchanges it for a token
  */
 const _handle_code = _.promise.make((self, done) => {
     const method = "token.interactive/_handle_code";
@@ -41,6 +45,38 @@ const _handle_code = _.promise.make((self, done) => {
         self.token = token
 
         done(null, self)
+    })
+})
+
+/**
+ *  Called when token refreshed (typically a 1 hour lifespan)
+ */
+const _handle_token_refresh = rules => _.promise.make(self => {
+    const method = "token.interactive/_handle_token_refresh"
+
+    self.google.client.on("tokens", (tokens) => {
+        assert.ok(_.is.Object(tokens), `${method}: expected on(tokens) to create Object`)
+
+        const json = Object.assign({}, self.token, tokens)
+
+        _.promise.make(self)
+            .then(_.promise.add("token", json))
+            .then(rules.write)
+            .then(_.promise.make(sd => {
+                logger.info({
+                    method: method,
+                    expires: new Date(sd.token.expiry_date).toISOString(),
+                }, "renewed token")
+            }))
+            .catch(error => {
+                delete error.self
+                console.log("#", error)
+
+                logger.error({
+                    method: method,
+                    error: _.error.message(error),
+                }, "error saving renewed token")
+            })
     })
 })
 
@@ -66,6 +102,8 @@ const interactive = rules => _.promise.make((self, done) => {
         .then(rules.write)
 
         .catch(_.promise.unbail)
+
+        .then(_handle_token_refresh(rules))
         .then(_.promise.make(sd => {
             sd.google.client.setCredentials(sd.token)
         }))
