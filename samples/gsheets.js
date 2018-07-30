@@ -63,6 +63,8 @@ const _request_token_code = _.promise.make((self, done) => {
         output: process.stdout,
     })
     prompt.question("Enter the code from that page here: ", code => {
+        prompt.close()
+
         self.code = code
 
         done(null, self)

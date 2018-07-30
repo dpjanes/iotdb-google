@@ -27,6 +27,24 @@ const _ = require("iotdb-helpers")
 const assert = require("assert")
 
 /**
+ */
+const _handle_code = _.promise.make((self, done) => {
+    const method = "token.interactive/_handle_code";
+
+    assert.ok(self.code, `${method}: expected self.code after rules.prompt`)
+
+    self.google.client.getToken(self.code, (error, token) => {
+        if (error) {
+            return done(error)
+        }
+
+        self.token = token
+
+        done(null, self)
+    })
+})
+
+/**
  *  Requires: 
  *  Produces: 
  */
@@ -44,18 +62,7 @@ const interactive = rules => _.promise.make((self, done) => {
         .then(_.promise.bail.conditional(sd => sd.token))
 
         .then(rules.prompt)
-        .then(_.promise.make(sd => {
-            assert.ok(sd.code, `${method}: expected sd.code after rules.prompt`)
-
-            self.google.client.getToken(sd.code, (error, token) => {
-                if (error) {
-                    return done(error)
-                }
-
-                self.token = token
-
-            })
-        }))
+        .then(_handle_code)
         .then(rules.write)
 
         .catch(_.promise.unbail)
