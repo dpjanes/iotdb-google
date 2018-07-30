@@ -141,10 +141,6 @@ if (ad.help) {
     help()
 }
 
-if (!scopes.length) {
-    help("no scopes or services set")
-}
-
 _.promise.make({
     token_path: ad.token,
     scopes: scopes,
@@ -157,6 +153,17 @@ _.promise.make({
         }
 
         sd.googled.credentials = sd.json
+    }))
+
+    .then(fs.read.json.p(ad.token, null))
+    .then(_.promise.make(sd => {
+        if (sd.json) {
+            return
+        }
+        
+        if (!scopes.length) {
+            help("no scopes or services set, and no existing token file")
+        }
     }))
 
     .then(google.initialize)
