@@ -62,19 +62,21 @@ _handle_code.accepts = {
 
 /**
  *  Called when token refreshed (typically a 1 hour lifespan).
- *  This does not return anything
  */
-const _handle_token_refresh = rules => _.promise(self => {
+const _handle_token_refresh = rules => _.promise((self, done) => {
     self.google.client.on("tokens", token_response => {
         assert.ok(_.is.Dictionary(token_response), 
             `${_handle_token_refresh.method}: expected on(token_response) to create Object`)
 
+        self.googled = Object.assign(
+            {},
+            self.googled || {},
+            {
+                token: token_response,
+            }
+        )
+
         _.promise(self)
-            .add({
-                googled: {
-                    token: token_response,
-                },
-            })
             .then(rules.write)
             .make(sd => {
                 logger.info({
@@ -83,14 +85,12 @@ const _handle_token_refresh = rules => _.promise(self => {
                 }, "renewed token")
             })
             .catch(error => {
-                delete error.self
-                console.log("#", error)
-
                 logger.error({
                     method: method,
                     error: _.error.message(error),
                 }, "error saving renewed token")
             })
+            .end(done, self)
     })
 })
 
