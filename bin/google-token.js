@@ -35,23 +35,6 @@ try {
     openurl = require("openurl")
 } catch (x) {
 }
-
-/**
- */
-const _read_token = _.promise((self, done) => {
-    _.promise(self)
-        .then(fs.read.json.p(self.token_path, null))
-        .end(done, self, "json:token")
-})
-
-/**
- */
-const _write_token = _.promise((self, done) => {
-    _.promise(self)
-        .then(fs.write.json.p(self.token_path, self.token))
-        .end(done, self)
-})
-
 /**
  */
 const _request_token_code = _.promise((self, done) => {
@@ -97,7 +80,7 @@ const scopes = []
 
 if (ad.sheets) {
     if (ad.write) {
-        scopes.push("https://www.googleapis.com/auth/spreadsheets.readonly")
+        scopes.push("https://www.googleapis.com/auth/spreadsheets")
     } else {
         scopes.push("https://www.googleapis.com/auth/spreadsheets.readonly")
     }
@@ -149,9 +132,10 @@ if (ad.help) {
 }
 
 _.promise({
-    token_path: ad.token,
     scopes: scopes,
-    googled: {},
+    googled: {
+        token_path: ad.token,
+    },
 })
     .then(fs.read.json.p(ad.credentials, null))
     .make(sd => {
@@ -162,9 +146,10 @@ _.promise({
         sd.googled.credentials = sd.json
     })
 
-    .then(fs.read.json.p(ad.token, null))
+    // we don't need scopes if renewing
+    .then(google.auth.token.read)
     .make(sd => {
-        if (sd.json) {
+        if (sd.googled.token) {
             return
         }
         
@@ -175,8 +160,6 @@ _.promise({
 
     .then(google.initialize)
     .then(google.auth.interactive({
-        read: _read_token,
-        write: _write_token,
         prompt: _request_token_code,
     }))
     .make(sd => {

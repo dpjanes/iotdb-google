@@ -20,31 +20,66 @@
  *  limitations under the License.
  */
 
-"use strict";
+"use strict"
 
 const _ = require("iotdb-helpers")
+const fs = require("iotdb-fs")
 
 const google = require("googleapis")
 
-const assert = require("assert")
+/**
+ *  Sets credentials based on token
+ */
+const token = _.promise(self => {
+    _.promise.validate(self, token)
+
+    self.google.client.setCredentials(self.googled.token)
+})
+
+token.method = "auth.token"
+token.requires = {
+    google: {
+        client: _.is.Object,
+    },
+    googled: {
+        token: _.is.Dictionary,
+    },
+}
 
 /**
- *  Requires: self.google.client, self.googled.credentials
- *  Produces: self.google
  */
-const token = _.promise.make((self, done) => {
-    const method = "auth.token";
-
-    assert.ok(self.google, `${method}: expected self.google`)
-    assert.ok(self.google.client, `${method}: expected self.google.client`)
-    assert.ok(self.token, `${method}: expected self.token`)
-
-    self.google.client.setCredentials(self.token)
-
-    done(null, self)
+const token_read = _.promise((self, done) => {
+    _.promise(self)
+        .then(fs.read.json.p(self.googled.token_path, null))
+        .end(done, self, "json:googled/token")
 })
+
+token_read.method = "auth.token.read"
+token_read.requires = {
+    googled: {
+        token_path: _.is.String,
+    },
+}
+
+/**
+ */
+const token_write = _.promise((self, done) => {
+    _.promise(self)
+        .then(fs.write.json.p(self.googled.token_path, self.googled.token))
+        .end(done, self)
+})
+
+token_write.method = "auth.token.write"
+token_write.requires = {
+    googled: {
+        token_path: _.is.String,
+        token: _.is.Dictionary,
+    },
+}
 
 /**
  *  API
  */
 exports.token = token;
+exports.token.read = token_read;
+exports.token.write = token_write;

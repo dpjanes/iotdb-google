@@ -32,42 +32,56 @@ const logger = require("../logger")(__filename)
  *  When the user code returns a code, this
  *  exchanges it for a token
  */
-const _handle_code = _.promise.make((self, done) => {
-    const method = "auth.interactive/_handle_code";
+const _handle_code = _.promise((self, done) => {
+    _.promise.validate(self, _handle_code)
 
-    assert.ok(self.code, `${method}: expected self.code after rules.prompt`)
-
-    self.google.client.getToken(self.code, (error, token) => {
+    self.google.client.getToken(self.code, (error, token_response) => {
         if (error) {
             return done(error)
         }
 
-        self.token = token
+        self.googled = Object.assign(
+            {},
+            self.googled || {},
+            {
+                token: token_response,
+            }
+        )
 
         done(null, self)
     })
 })
 
+_handle_code.method = "auth.interactive/_handle_code"
+_handle_code.requires = {
+    code: _.is.String,
+}
+_handle_code.accepts = {
+    googled: _.is.Dictionary,
+}
+
 /**
- *  Called when token refreshed (typically a 1 hour lifespan)
+ *  Called when token refreshed (typically a 1 hour lifespan).
+ *  This does not return anything
  */
-const _handle_token_refresh = rules => _.promise.make(self => {
-    const method = "auth.interactive/_handle_token_refresh"
+const _handle_token_refresh = rules => _.promise(self => {
+    self.google.client.on("tokens", token_response => {
+        assert.ok(_.is.Dictionary(token_response), 
+            `${_handle_token_refresh.method}: expected on(token_response) to create Object`)
 
-    self.google.client.on("tokens", (tokens) => {
-        assert.ok(_.is.Object(tokens), `${method}: expected on(tokens) to create Object`)
-
-        const json = Object.assign({}, self.token, tokens)
-
-        _.promise.make(self)
-            .then(_.promise.add("token", json))
+        _.promise(self)
+            .add({
+                googled: {
+                    token: token_response,
+                },
+            })
             .then(rules.write)
-            .then(_.promise.make(sd => {
+            .make(sd => {
                 logger.info({
-                    method: method,
+                    method: _handle_token_refresh.method,
                     expires: new Date(sd.token.expiry_date).toISOString(),
                 }, "renewed token")
-            }))
+            })
             .catch(error => {
                 delete error.self
                 console.log("#", error)
@@ -80,22 +94,27 @@ const _handle_token_refresh = rules => _.promise.make(self => {
     })
 })
 
+_handle_token_refresh.method = "auth.interactive/_handle_token_refresh"
+_handle_token_refresh.requires = {
+}
+
 /**
- *  Requires: 
- *  Produces: 
  */
-const interactive = rules => _.promise.make((self, done) => {
-    const method = "token.interactive";
+const interactive = rules => _.promise((self, done) => {
+    const google = require("..")
 
-    assert.ok(self.google, `${method}: expected self.google`)
-    assert.ok(self.google.client, `${method}: expected self.google.client`)
-    assert.ok(rules.read, `${method}: expected rules.read`)
-    assert.ok(rules.write, `${method}: expected rules.write`)
-    assert.ok(rules.prompt, `${method}: expected rules.code`)
+    rules = _.d.clone(rules)
+    rules.read = rules.read || google.auth.token.read
+    rules.write = rules.write || google.auth.token.write
 
-    _.promise.make(self)
+    assert.ok(_.is.Function(rules.read), `${interactive.method}: rules.read is required`)
+    assert.ok(_.is.Function(rules.write), `${interactive.method}: rules.write is required`)
+    assert.ok(_.is.Function(rules.prompt), `${interactive.method}: rules.prompt is required`)
+
+    _.promise(self)
+        .validate(interactive)
         .then(rules.read)
-        .then(_.promise.bail.conditional(sd => sd.token))
+        .then(_.promise.bail.conditional(sd => sd.googled.token))
 
         .then(rules.prompt)
         .then(_handle_code)
@@ -104,12 +123,16 @@ const interactive = rules => _.promise.make((self, done) => {
         .catch(_.promise.unbail)
 
         .then(_handle_token_refresh(rules))
-        .then(_.promise.make(sd => {
-            sd.google.client.setCredentials(sd.token)
-        }))
-        .then(_.promise.done(done, self))
-        .catch(done)
+        .then(google.auth.token)
+        .end(done, self, "googled")
 })
+
+interactive.method = "token.interactive"
+interactive.requires = {
+    google: {
+        client: _.is.Object,
+    },
+}
 
 /**
  *  API
