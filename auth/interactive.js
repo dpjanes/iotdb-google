@@ -61,9 +61,11 @@ _handle_code.accepts = {
 }
 
 /**
- *  Called when token refreshed (typically a 1 hour lifespan).
+ *  Check to see if the token has refreshed and store that.
+ *  This function returns immediately, as the callback
+ *  does not always trigger, thanks Obama.
  */
-const _handle_token_refresh = rules => _.promise((self, done) => {
+const _handle_token_refresh = rules => _.promise(self => {
     self.google.client.on("tokens", token_response => {
         assert.ok(_.is.Dictionary(token_response), 
             `${_handle_token_refresh.method}: expected on(token_response) to create Object`)
@@ -89,8 +91,7 @@ const _handle_token_refresh = rules => _.promise((self, done) => {
                     method: method,
                     error: _.error.message(error),
                 }, "error saving renewed token")
-            })
-            .end(done, self)
+            });
     })
 })
 

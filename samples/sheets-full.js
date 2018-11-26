@@ -29,25 +29,6 @@ const assert = require("assert")
 const readline = require("readline")
 
 const google = require("..")
-
-/**
- */
-const _read_token = _.promise((self, done) => {
-    _.promise(self)
-        .then(fs.read.json.p(self.token_path, null))
-        .then(_.promise.done(done, self, "json:token"))
-        .catch(done)
-})
-
-/**
- */
-const _write_token = _.promise((self, done) => {
-    _.promise(self)
-        .then(fs.write.json.p(self.token_path, self.token))
-        .then(_.promise.done(done, self))
-        .catch(done)
-})
-
 /**
  */
 const _request_token_code = _.promise((self, done) => {
@@ -77,10 +58,11 @@ if (require.main === module) {
             "https://www.googleapis.com/auth/spreadsheets.readonly",
         ],
         googled: {
-            credentials: require("./credentials.json"),
+            credentials_path: "./credentials.json",
             token_path: "./token.json",
         },
     })
+        .then(google.auth.credentials.read)
         .then(google.initialize)
         .then(google.auth.interactive({
             prompt: _request_token_code,
@@ -92,7 +74,7 @@ if (require.main === module) {
         }))
         .then(google.sheets.headers.first)
         .make(sd => {
-            // console.log("+", JSON.stringify(sd.jsons, null, 2))
+            console.log("+", JSON.stringify(sd.jsons, null, 2))
         })
         .catch(error => {
             delete error.self

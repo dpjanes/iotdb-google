@@ -24,6 +24,7 @@
 
 module.exports = Object.assign(
     {},
+    require("./credentials"),
     require("./token"),
     require("./interactive"),
     {}
