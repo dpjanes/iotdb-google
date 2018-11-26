@@ -30,15 +30,12 @@ const assert = require("assert")
  *  Requires: self.googled
  *  Produces: self.google
  */
-const initialize = _.promise.make((self, done) => {
-    const method = "initialize";
+const initialize = _.promise((self, done) => {
     const google = require("googleapis").google
 
-    assert.ok(self.googled, `${method}: expected self.googled`)
-    assert.ok(self.googled.credentials, `${method}: expected self.googled.credentials`)
-
-    _.promise.make(self)
-        .then(_.promise.make(sd => {
+    _.promise(self)
+        .validate(initialize)
+        .make(sd => {
             const credentials = self.googled.credentials.installed
 
             sd.google = {
@@ -48,10 +45,16 @@ const initialize = _.promise.make((self, done) => {
                     credentials.redirect_uris[0]
                 ),
             }
-        }))
-        .then(_.promise.done(done, self, "google"))
-        .catch(done)
+        })
+        .end(done, self, "google")
 })
+
+initialize.method = "initialize"
+initialize.requires = {
+    googled: {
+        credentials: _.is.Dictionary,
+    }
+}
 
 /**
  *  API

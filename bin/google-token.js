@@ -30,33 +30,40 @@ const readline = require("readline")
 
 const google = require("..")
 
+let openurl 
+try {
+    openurl = require("openurl")
+} catch (x) {
+}
+
 /**
  */
-const _read_token = _.promise.make((self, done) => {
-    _.promise.make(self)
+const _read_token = _.promise((self, done) => {
+    _.promise(self)
         .then(fs.read.json.p(self.token_path, null))
-        .then(_.promise.done(done, self, "json:token"))
-        .catch(done)
+        .end(done, self, "json:token")
 })
 
 /**
  */
-const _write_token = _.promise.make((self, done) => {
-    _.promise.make(self)
+const _write_token = _.promise((self, done) => {
+    _.promise(self)
         .then(fs.write.json.p(self.token_path, self.token))
-        .then(_.promise.done(done, self))
-        .catch(done)
+        .end(done, self)
 })
 
 /**
  */
-const _request_token_code = _.promise.make((self, done) => {
+const _request_token_code = _.promise((self, done) => {
     const auth_url = self.google.client.generateAuthUrl({
         access_type: "offline",
         scope: self.scopes,
     });
 
     console.log("-", "go to authorization url:", auth_url);
+    if (openurl) {
+        openurl.open(auth_url)
+    }
 
     const prompt = readline.createInterface({
         input: process.stdin,
@@ -141,22 +148,22 @@ if (ad.help) {
     help()
 }
 
-_.promise.make({
+_.promise({
     token_path: ad.token,
     scopes: scopes,
     googled: {},
 })
     .then(fs.read.json.p(ad.credentials, null))
-    .then(_.promise.make(sd => {
+    .make(sd => {
         if (!sd.json) {
             help("make sure to get credentials first")
         }
 
         sd.googled.credentials = sd.json
-    }))
+    })
 
     .then(fs.read.json.p(ad.token, null))
-    .then(_.promise.make(sd => {
+    .make(sd => {
         if (sd.json) {
             return
         }
@@ -164,7 +171,7 @@ _.promise.make({
         if (!scopes.length) {
             help("no scopes or services set, and no existing token file")
         }
-    }))
+    })
 
     .then(google.initialize)
     .then(google.auth.interactive({
@@ -172,9 +179,9 @@ _.promise.make({
         write: _write_token,
         prompt: _request_token_code,
     }))
-    .then(_.promise.make(sd => {
+    .make(sd => {
         console.log("+", "done")
-    }))
+    })
     .catch(error => {
         delete error.self
         console.log("#", error)

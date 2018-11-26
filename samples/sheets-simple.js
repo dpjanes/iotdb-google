@@ -38,7 +38,7 @@ try {
     console.log("#", "use bin/google-token to get tokens first")
 }
 
-_.promise.make({
+_.promise({
     googled: {
         credentials: credentials,
     },
@@ -52,9 +52,9 @@ _.promise.make({
         range: "Class Data!A1:E",
     }))
     .then(google.sheets.headers.first)
-    .then(_.promise.make(sd => {
+    .make(sd => {
         console.log("+", JSON.stringify(sd.jsons, null, 2))
-    }))
+    })
     .catch(error => {
         delete error.self
         console.log("#", error)
