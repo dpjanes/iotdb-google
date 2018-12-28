@@ -1,11 +1,11 @@
 /*
- *  index.js
+ *  chat/index.js
  *
  *  David Janes
  *  IOTDB.org
- *  2018-07-28
+ *  2018-12-27
  *
- *  Copyright [2013-2018] [David P. Janes]
+ *  Copyright [2013-2018] David P. Janes
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@
  *  limitations under the License.
  */
 
-"use strict"
+"use strict";
 
-exports.initialize = require("./initialize").initialize
-
-exports.auth = require("./auth")
-exports.sheets = require("./sheets")
-exports.chat = require("./chat")
+module.exports = Object.assign(
+    {},
+    require("./initialize"),
+    {}
+)

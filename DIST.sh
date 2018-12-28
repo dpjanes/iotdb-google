@@ -6,7 +6,6 @@
 #   2018-07-28
 #
 
-exit 0
 PACKAGE=iotdb-google
 DIST_ROOT=/var/tmp/.dist.$$
 
@@ -37,7 +36,9 @@ echo "=================="
         README.md LICENSE \
         package.json \
         index.js \
-        lib/*.js \
+        auth/*.js \
+        chat/*.js \
+        sheets/*.js \
         |
     ( cd "${NPM_DST}" && tar xvf - && npm publish ) || exit 1
     git commit -m "new release" package.json || exit 1
@@ -45,3 +46,4 @@ echo "=================="
 
     echo "end"
 )
+

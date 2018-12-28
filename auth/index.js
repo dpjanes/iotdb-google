@@ -27,5 +27,6 @@ module.exports = Object.assign(
     require("./credentials"),
     require("./token"),
     require("./interactive"),
+    require("./service_account"),
     {}
 )
