@@ -68,16 +68,11 @@ if (action("list-values-query")) {
         .then(google.initialize)
         .then(google.auth.token)
         .then(google.sheets.initialize)
+        // this is public example data
         .then(google.sheets.list_values.p({
             spreadsheetId: "10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE",
             range: "Sheet1!A1:C",
         }))
-        /*
-        .then(google.sheets.list_values.p({
-            spreadsheetId: "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms",
-            range: "Class Data!A1:E",
-        }))
-         */
         .then(google.sheets.headers.first)
         .make(sd => {
             console.log("+", JSON.stringify(sd.jsons, null, 2))
@@ -90,6 +85,7 @@ if (action("list-values-query")) {
         .then(google.initialize)
         .then(google.auth.token)
         .then(google.sheets.initialize)
+        // this is my private data
         .then(google.sheets.list.p("/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/Class Data!A1:E"))
         .then(google.sheets.headers.first)
         .make(sd => {
@@ -107,6 +103,20 @@ if (action("list-values-query")) {
         .then(google.sheets.headers.first)
         .make(sd => {
             console.log("+", JSON.stringify(sd.jsons, null, 2))
+        })
+        .catch(_error)
+} else if (action("append")) {
+    _.promise({
+        googled: googled,
+        jsons: [ [ "A", "B", 1 ], ]
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.sheets.initialize)
+        .then(google.sheets.parse_path.p("/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE/Sheet1/A1:C"))
+        .then(google.sheets.append)
+        .make(sd => {
+            console.log("+", "done")
         })
         .catch(_error)
 } else if (!action_name) {
