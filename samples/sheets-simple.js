@@ -41,8 +41,8 @@ try {
 _.promise({
     googled: {
         credentials: credentials,
+        token: token,
     },
-    token: token,
 })
     .then(google.initialize)
     .then(google.auth.token)
