@@ -24,18 +24,12 @@
 
 const _ = require("iotdb-helpers")
 
-const assert = require("assert")
-
 /**
  *  Requires: self.google.sheets
  *  Produces: self.jsons, self.google_result
  */
-const list_values = _.promise.make((self, done) => {
-    const method = "sheets.list_values";
-
-    assert.ok(self.query, `${method}: expected self.query`)
-    assert.ok(self.google, `${method}: expected self.google`)
-    assert.ok(self.google.sheets, `${method}: expected self.google.sheets`)
+const list_values = _.promise((self, done) => {
+    _.promise.validate(self, list_values)
 
     self.google.sheets.spreadsheets.values.get(self.query, (error, result) => {
         if (error) {
@@ -47,17 +41,33 @@ const list_values = _.promise.make((self, done) => {
         
         done(null, self)
     })
-
 })
+
+list_values.method = "sheets.list_values";
+list_values.requires = {
+    query: {
+        spreadsheetId: _.is.String,
+        range: _.is.String,
+    },
+    google: {
+        sheets: _.is.Object,
+    },
+}
+list_values.produces = {
+    google_result: _.is.Dictionary,
+    jsons: _.is.Array,
+}
+
 
 /**
  */
-const parameterized = query => _.promise.make((self, done) => {
-    _.promise.make(self)
-        .then(_.promise.add("query", query))
+const parameterized = query => _.promise((self, done) => {
+    const google = require("..")
+
+    _.promise(self)
+        .conditional(_.is.String(query), google.sheets.parse_path.p(query), _.promise.add("query", query))
         .then(list_values)
-        .then(_.promise.done(done, self, "jsons,google_result"))
-        .catch(done)
+        .end(done, self, "jsons,google_result")
 })
 
 /**

@@ -25,6 +25,7 @@
 const _ = require("iotdb-helpers")
 
 const assert = require("assert")
+const minimist = require("minimist")
 
 const google = require("..")
 
@@ -38,24 +39,66 @@ try {
     console.log("#", "use bin/google-token to get tokens first")
 }
 
-_.promise({
-    googled: {
-        credentials: credentials,
-        token: token,
-    },
-})
-    .then(google.initialize)
-    .then(google.auth.token)
-    .then(google.sheets.initialize)
-    .then(google.sheets.list_values.p({
-        spreadsheetId: "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms",
-        range: "Class Data!A1:E",
-    }))
-    .then(google.sheets.headers.first)
-    .make(sd => {
-        console.log("+", JSON.stringify(sd.jsons, null, 2))
+
+const ad = minimist(process.argv.slice(2));
+const action_name = ad._[0]
+
+const actions = []
+const action = name => {
+    actions.push(name)
+
+    return action_name === name
+}
+
+const _error = error => {
+    delete error.self
+    console.log("#", error)
+}
+
+const googled = {
+    credentials: credentials,
+    token: token,
+}
+
+
+if (action("list-values-query")) {
+    _.promise({
+        googled: googled,
     })
-    .catch(error => {
-        delete error.self
-        console.log("#", error)
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.sheets.initialize)
+        .then(google.sheets.list_values.p({
+            spreadsheetId: "10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE",
+            range: "Sheet1!A1:C",
+        }))
+        /*
+        .then(google.sheets.list_values.p({
+            spreadsheetId: "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms",
+            range: "Class Data!A1:E",
+        }))
+         */
+        .then(google.sheets.headers.first)
+        .make(sd => {
+            console.log("+", JSON.stringify(sd.jsons, null, 2))
+        })
+        .catch(_error)
+} else if (action("list-values-path")) {
+    _.promise({
+        googled: googled,
     })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.sheets.initialize)
+        .then(google.sheets.list_values.p("/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE/Sheet1/A1:C"))
+        .then(google.sheets.headers.first)
+        .make(sd => {
+            console.log("+", JSON.stringify(sd.jsons, null, 2))
+        })
+        .catch(_error)
+} else if (!action_name) {
+    console.log("#", "action required - should be one of:", actions.join(", "))
+} else {
+    console.log("#", "unknown action - should be one of:", actions.join(", "))
+}
+
