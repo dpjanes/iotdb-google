@@ -83,6 +83,19 @@ if (action("list-values-query")) {
             console.log("+", JSON.stringify(sd.jsons, null, 2))
         })
         .catch(_error)
+} else if (action("list-path")) {
+    _.promise({
+        googled: googled,
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.sheets.initialize)
+        .then(google.sheets.list.p("/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/Class Data!A1:E"))
+        .then(google.sheets.headers.first)
+        .make(sd => {
+            console.log("+", JSON.stringify(sd.jsons, null, 2))
+        })
+        .catch(_error)
 } else if (action("list-values-path")) {
     _.promise({
         googled: googled,
