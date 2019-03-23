@@ -38,6 +38,14 @@ const headers = _.promise.make(self => {
 
     self.jsons = self.jsons
         .map(row => _.object(self.headers, row))
+        .map(row => {
+            _.mapObject(row, (value, key) => {
+                if (_.is.Undefined(value)) {
+                    delete row[key]
+                }
+            })
+            return row
+        })
 })
 
 /**
