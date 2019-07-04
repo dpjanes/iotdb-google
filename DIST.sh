@@ -35,7 +35,7 @@ echo "=================="
         --exclude "yy*" \
         README.md LICENSE \
         package.json \
-        index.js \
+        *.js \
         auth/*.js \
         chat/*.js \
         sheets/*.js \

@@ -32,3 +32,7 @@ module.exports = Object.assign(
     require("./parse_path"),
     {}
 )
+
+module.exports.batch = {
+    update: require("./batch_update").batch_update,
+}
