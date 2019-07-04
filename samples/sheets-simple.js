@@ -132,6 +132,46 @@ if (action("list-values-query")) {
             console.log("+", "done")
         })
         .catch(_error)
+} else if (action("find_replace")) {
+    _.promise({
+        googled: googled,
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.sheets.initialize)
+        .then(google.sheets.parse_path.p("/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE/Sheet1/A1:C1"))
+        .then(google.sheets.batch.find_replace("FIND", "REPLACE-XXX"))
+        .then(google.sheets.batch.update)
+        .make(sd => {
+            console.log("+", "done")
+        })
+        .catch(_error)
+} else if (action("properties")) {
+    _.promise({
+        googled: googled,
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.sheets.initialize)
+        .then(google.sheets.parse_path.p("/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE/Sheet1/A1:C1"))
+        .then(google.sheets.properties)
+        .make(sd => {
+            console.log("+", "done", JSON.stringify(sd.properties, null, 2))
+        })
+        .catch(_error)
+} else if (action("sheets")) {
+    _.promise({
+        googled: googled,
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.sheets.initialize)
+        .then(google.sheets.parse_path.p("/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE/Sheet1/A1:C1"))
+        .then(google.sheets.sheets)
+        .make(sd => {
+            console.log("+", "done", JSON.stringify(sd.sheets, null, 2))
+        })
+        .catch(_error)
 } else if (!action_name) {
     console.log("#", "action required - should be one of:", actions.join(", "))
 } else {

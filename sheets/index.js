@@ -30,9 +30,12 @@ module.exports = Object.assign(
     require("./list"),
     require("./list_values"),
     require("./parse_path"),
+    require("./properties"),
+    require("./sheets"),
     {}
 )
 
 module.exports.batch = {
     update: require("./batch_update").batch_update,
+    find_replace: require("./batch_find_replace").find_replace,
 }

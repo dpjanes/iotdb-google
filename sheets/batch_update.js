@@ -24,11 +24,84 @@
 
 const _ = require("iotdb-helpers")
 
+
+/**
+ */
+const _resolve_ranges = _.promise((self, done) => {
+    const ranged = {}
+    
+    self.requests.forEach(request => {
+        _.mapObject(request, (valued, key) => {
+            if (_.is.Undefined(valued.range)) {
+                return
+            } else if (_.is.Null(valued.range)) {
+                delete valued.range
+                valued.allSheets = true
+            } else {
+                ranged[valued.range] = null
+                delete valued.range
+                valued.allSheets = true
+            }
+        })
+    })
+
+    if (_.is.Empty(ranged)) {
+        return done(null, self)
+    }
+
+    console.log(JSON.stringify(ranged, null, 2))
+    
+    _.promise(self)
+        .validate(_resolve_ranges)
+        .end(done, self)
+})
+
+_resolve_ranges.method = "_resolve_ranges"
+_resolve_ranges.requires = {
+}
+_resolve_ranges.accepts = {
+}
+_resolve_ranges.produces = {
+}
+
+/**
+ */
+const _update = _.promise((self, done) => {
+    self.google.sheets.spreadsheets.batchUpdate({
+        spreadsheetId: self.query.spreadsheetId,
+        resource: {
+            requests: self.requests,
+        },
+    }, (error, result) => {
+        if (error) {
+            return done(error)
+        }
+        
+        self.google_result = result
+        
+        done(null, self)
+    })
+})
+
+_update.method = "_update"
+_update.requires = {
+}
+_update.accepts = {
+}
+_update.produces = {
+}
+
 /**
  */
 const batch_update = _.promise((self, done) => {
     _.promise.validate(self, batch_update)
 
+    _.promise(self)
+        .then(_resolve_ranges)
+        .then(_update)
+        .end(done, self, "google_result")
+
+    /*
     const title = "NEW TITLE"
     const find = "FIND"
     const replacement = "REPLACE"
@@ -49,32 +122,16 @@ const batch_update = _.promise((self, done) => {
             },
         },
     ]
+    */
 
-    const params = {
-        spreadsheetId: self.query.spreadsheetId,
-        resource: {
-            requests: requests,
-        },
-    }
 
-    self.google.sheets.spreadsheets.batchUpdate(params, (error, result) => {
-        if (error) {
-            return done(error)
-        }
-        
-        self.google_result = result
-        self.jsons = result.data.values
-        
-        done(null, self)
-    })
 })
 
 batch_update.method = "sheets.batch.update";
 batch_update.requires = {
-    // jsons: _.is.Array.of.JSON,
+    requests: _.is.Array.of.JSON,
     query: {
         spreadsheetId: _.is.String,
-        range: _.is.String,
     },
     google: {
         sheets: _.is.Object,

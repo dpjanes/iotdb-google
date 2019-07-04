@@ -40,6 +40,7 @@ const parse_path = _.promise(self => {
 
     case 1:
         self.query.spreadsheetId = parts[0]
+        self.query.range = null
         break
 
     case 2:
@@ -64,7 +65,7 @@ parse_path.requires = {
 parse_path.produces = {
     query: {
         spreadsheetId: _.is.String,
-        range: [ _.is.String, _.is.Nullish ],
+        range: _.is.String, 
     },
 }
 
