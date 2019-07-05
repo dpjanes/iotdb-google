@@ -202,7 +202,7 @@ if (action("list-values-query")) {
         .then(google.sheets.parse_path.p("/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE/Sheet1/A1:C1"))
         .then(google.sheets.title.set.p("Hello, World"))
         .make(sd => {
-            console.log("+", "done", JSON.stringify(sd.properties, null, 2))
+            console.log("+", "done")
         })
         .catch(_error)
 } else if (!action_name) {

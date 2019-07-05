@@ -42,7 +42,7 @@ const title_set = _.promise((self, done) => {
             },
         ])
         .then(google.sheets.batch.update)
-        .end(done, self, "google_result")
+        .end(done, self, "google$result")
 })
 
 title_set.method = "sheets.title.set"
@@ -56,7 +56,7 @@ title_set.requires = {
     },
 }
 title_set.produces = {
-    google_result: _.is.Dictionary,
+    google$result: _.is.Dictionary,
 }
 
 /**
@@ -65,7 +65,7 @@ const title_set_p = _title => _.promise((self, done) => {
     _.promise(self) 
         .add("title", _title)
         .then(title_set)
-        .end(done, self, "google_result")
+        .end(done, self, "google$result")
 })
 
 /**

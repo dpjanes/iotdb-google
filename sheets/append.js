@@ -44,7 +44,7 @@ const append = _.promise((self, done) => {
             return done(error)
         }
         
-        self.google_result = result
+        self.google$result = result
         self.jsons = result.data.values
         
         done(null, self)
@@ -63,7 +63,7 @@ append.requires = {
     },
 }
 append.produces = {
-    google_result: _.is.Dictionary,
+    google$result: _.is.Dictionary,
 }
 
 /**

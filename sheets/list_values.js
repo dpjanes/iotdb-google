@@ -26,7 +26,7 @@ const _ = require("iotdb-helpers")
 
 /**
  *  Requires: self.google.sheets
- *  Produces: self.jsons, self.google_result
+ *  Produces: self.jsons, self.google$result
  */
 const list_values = _.promise((self, done) => {
     _.promise.validate(self, list_values)
@@ -36,7 +36,7 @@ const list_values = _.promise((self, done) => {
             return done(error)
         }
         
-        self.google_result = result
+        self.google$result = result
         self.jsons = result.data.values
         
         done(null, self)
@@ -54,7 +54,7 @@ list_values.requires = {
     },
 }
 list_values.produces = {
-    google_result: _.is.Dictionary,
+    google$result: _.is.Dictionary,
     jsons: _.is.Array,
 }
 
@@ -67,7 +67,7 @@ const parameterized = query => _.promise((self, done) => {
     _.promise(self)
         .conditional(_.is.String(query), google.sheets.parse_path.p(query), _.promise.add("query", query))
         .then(list_values)
-        .end(done, self, "jsons,google_result")
+        .end(done, self, "jsons,google$result")
 })
 
 /**

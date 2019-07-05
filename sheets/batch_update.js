@@ -97,7 +97,7 @@ const _update = _.promise((self, done) => {
             return done(error)
         }
         
-        self.google_result = result
+        self.google$result = result
         
         done(null, self)
     })
@@ -119,32 +119,7 @@ const batch_update = _.promise((self, done) => {
     _.promise(self)
         .then(_resolve_ranges)
         .then(_update)
-        .end(done, self, "google_result")
-
-    /*
-    const title = "NEW TITLE"
-    const find = "FIND"
-    const replacement = "REPLACE"
-    const requests = [
-        {
-            updateSpreadsheetProperties: {
-                properties: {
-                    title,
-                },
-                fields: 'title',
-            },
-        },
-        {
-            findReplace: {
-                find,
-                replacement,
-                allSheets: true,
-            },
-        },
-    ]
-    */
-
-
+        .end(done, self, "google$result")
 })
 
 batch_update.method = "sheets.batch.update";
@@ -158,7 +133,7 @@ batch_update.requires = {
     },
 }
 batch_update.produces = {
-    google_result: _.is.Dictionary,
+    google$result: _.is.Dictionary,
 }
 
 /**

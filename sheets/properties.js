@@ -41,7 +41,7 @@ const properties = _.promise((self, done) => {
             return done(error)
         }
         
-        self.google_result = result
+        self.google$result = result
         self.properties = result.data
         
         done(null, self)
@@ -60,7 +60,7 @@ properties.requires = {
 properties.accepts = {
 }
 properties.produces = {
-    google_result: _.is.Dictionary,
+    google$result: _.is.Dictionary,
     properties: _.is.Dictionary,
 }
 

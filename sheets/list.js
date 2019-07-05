@@ -63,7 +63,7 @@ list.accepts = {
     },
 }
 list.produces = {
-    google_result: _.is.Dictionary,
+    google$result: _.is.Dictionary,
     jsons: _.is.Array,
 }
 
@@ -76,7 +76,7 @@ const parameterized = query => _.promise((self, done) => {
     _.promise(self)
         .conditional(_.is.String(query), google.sheets.parse_path.p(query), _.promise.add("query", query))
         .then(list)
-        .end(done, self, "jsons,google_result")
+        .end(done, self, "jsons,google$result")
 })
 
 /**
