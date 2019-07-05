@@ -74,7 +74,7 @@ const parameterized = query => _.promise((self, done) => {
     const google = require("..")
 
     _.promise(self)
-        .conditional(_.is.String(query), google.sheets.parse_path.p(query), _.promise.add("query", query))
+        .conditional(_.is.String(query), google.sheets.parse.p(query), _.promise.add("query", query))
         .then(list)
         .end(done, self, "jsons,google$result")
 })

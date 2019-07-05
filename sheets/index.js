@@ -29,6 +29,7 @@ module.exports = Object.assign(
     require("./headers"),
     require("./list"),
     require("./list_values"),
+    require("./parse"),
     require("./parse_path"),
     require("./parse_range"),
     require("./parse_url"),

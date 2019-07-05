@@ -44,7 +44,7 @@ This is changeable via command line options.
 
 ## Google Sheets
 
-See `samples/sheet-full.js` for a more worked out
+See `samples/sheets.js` for a more worked out
 version of this sample.
 
     const _ = require("iotdb-helpers")
