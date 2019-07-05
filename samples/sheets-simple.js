@@ -176,6 +176,22 @@ if (action("list-values-query")) {
             console.log("+", "done", JSON.stringify(sd.sheets, null, 2))
         })
         .catch(_error)
+} else if (action("parse")) {
+    _.promise({
+        googled: googled,
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.sheets.initialize)
+        .then(google.sheets.parse_url.p(
+            "https://docs.google.com/spreadsheets/d/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE/edit#gid=0"))
+        .then(google.sheets.parse_range.p("A1:A7"))
+        .then(google.sheets.batch.find_replace("Joe", "Joseph"))
+        .then(google.sheets.batch.update)
+        .make(sd => {
+            console.log("+", "done")
+        })
+        .catch(_error)
 } else if (!action_name) {
     console.log("#", "action required - should be one of:", actions.join(", "))
 } else {

@@ -38,12 +38,12 @@ const parse_url = _.promise(self => {
     }
 
     const url = new URL(self.url)
-    const match = url.match(/.*\/d\/([^\/]*)/)
+    const match = url.pathname.match(/.*\/d\/([^\/]*)/)
     if (!match) {
         return done(new errors.Invalid("did not understand URL"))
     }
 
-    self.query.spreadsheetId = match.group(1)
+    self.query.spreadsheetId = match[1]
 })
 
 parse_url.method = "sheets.parse_url"

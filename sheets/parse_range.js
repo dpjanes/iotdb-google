@@ -33,7 +33,7 @@ const parse_range = _.promise(self => {
     self.query.range = Object.assign(
         {},
         self.query,
-        { range }
+        { range: self.range }
     )
 })
 
