@@ -34,6 +34,7 @@ module.exports = Object.assign(
     require("./parse_url"),
     require("./properties"),
     require("./sheets"),
+    require("./title"),
     {}
 )
 

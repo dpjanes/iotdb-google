@@ -136,15 +136,15 @@ if (action("list-values-query")) {
             console.log("+", "done")
         })
         .catch(_error)
-} else if (action("find_replace")) {
+} else if (action("find_replace_regex")) {
     _.promise({
         googled: googled,
     })
         .then(google.initialize)
         .then(google.auth.token)
         .then(google.sheets.initialize)
-        .then(google.sheets.parse_path.p("/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE/Sheet1/A1:C1"))
-        .then(google.sheets.batch.find_replace("FIND", "REPLACE-XXX"))
+        .then(google.sheets.parse_path.p("/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE/Sheet1/A"))
+        .then(google.sheets.batch.find_replace.p(/J.*$/, "JJJJ"))
         .then(google.sheets.batch.update)
         .make(sd => {
             console.log("+", "done")
@@ -186,10 +186,23 @@ if (action("list-values-query")) {
         .then(google.sheets.parse_url.p(
             "https://docs.google.com/spreadsheets/d/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE/edit#gid=0"))
         .then(google.sheets.parse_range.p("A1:A7"))
-        .then(google.sheets.batch.find_replace("Joe", "Joseph"))
+        .then(google.sheets.batch.find_replace.p("Joe", "Joseph"))
         .then(google.sheets.batch.update)
         .make(sd => {
             console.log("+", "done")
+        })
+        .catch(_error)
+} else if (action("title.set")) {
+    _.promise({
+        googled: googled,
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.sheets.initialize)
+        .then(google.sheets.parse_path.p("/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE/Sheet1/A1:C1"))
+        .then(google.sheets.title.set.p("Hello, World"))
+        .make(sd => {
+            console.log("+", "done", JSON.stringify(sd.properties, null, 2))
         })
         .catch(_error)
 } else if (!action_name) {
