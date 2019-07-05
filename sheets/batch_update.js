@@ -28,6 +28,8 @@ const _ = require("iotdb-helpers")
 /**
  */
 const _resolve_ranges = _.promise((self, done) => {
+    const google = require("..")
+
     const ranged = {}
     
     self.requests.forEach(request => {
@@ -53,6 +55,40 @@ const _resolve_ranges = _.promise((self, done) => {
     
     _.promise(self)
         .validate(_resolve_ranges)
+
+        .then(google.sheets.sheets)
+        .make(sd => {
+            const _sheetId = title => {
+                const sheet = sd.sheets.find(sheet => sheet.title === title)
+                if (sheet) {
+                    return sheet.sheetId
+                } else {
+                    return null
+                }
+            }
+            _.keys(ranged)
+                .forEach(range => {
+                    const parts = range.split("!")
+                    if (parts.length === 0) {
+                        ranged[range] = {
+                            allSheets: true,
+                        }
+                    } else if (parts.length === 1) {
+                        ranged[range] = {
+                            sheetId: _sheetId(parts[0]),
+                            allSheets: false,
+                        }
+                    } else {
+                        ranged[range] = {
+                            sheetId: _sheetId(parts[0]),
+                            allSheets: false,
+                        }
+                    }
+                })
+
+            console.log("RANGED", ranged)
+        })
+
         .end(done, self)
 })
 
