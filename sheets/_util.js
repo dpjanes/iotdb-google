@@ -46,7 +46,6 @@ const parse_range = (text, sheets) => {
         return result
     }
 
-
     if (sheets && match[2]) {
         const sheet = sheets.find(sheet => sheet.title === match[2])
         if (sheet) {

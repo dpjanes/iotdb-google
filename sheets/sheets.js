@@ -41,6 +41,8 @@ const sheets = _.promise((self, done) => {
         
         self.google$result = result
         self.sheets = result.data.sheets
+            .map(s => s.properties)
+            .filter(s => s)
         
         done(null, self)
     })
