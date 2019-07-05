@@ -59,7 +59,6 @@ const _resolve_ranges = _.promise((self, done) => {
                     ranged[range] = _util.parse_range(range, sd.sheets)
                 })
 
-            console.log("RANGED", ranged)
             self.requests.forEach(request => {
                 _.mapObject(request, (valued, key) => {
                     if (_.is.Undefined(valued._range)) {
@@ -88,7 +87,6 @@ _resolve_ranges.produces = {
 /**
  */
 const _update = _.promise((self, done) => {
-            console.log("REQUESTS", JSON.stringify(self.requests, null, 2))
     self.google.sheets.spreadsheets.batchUpdate({
         spreadsheetId: self.query.spreadsheetId,
         resource: {

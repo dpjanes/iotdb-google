@@ -30,6 +30,8 @@ module.exports = Object.assign(
     require("./list"),
     require("./list_values"),
     require("./parse_path"),
+    require("./parse_range"),
+    require("./parse_url"),
     require("./properties"),
     require("./sheets"),
     {}
