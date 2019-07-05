@@ -69,8 +69,36 @@ const title_set_p = _title => _.promise((self, done) => {
 })
 
 /**
+ */
+const title_get = _.promise((self, done) => {
+    const google = require("..")
+
+    _.promise(self)
+        .validate(title_get)
+
+        .then(google.sheets.properties)
+
+        .end(done, self, "properties/title")
+
+})
+
+title_get.method = "sheets.title.get"
+title_get.requires = {
+    query: {
+        spreadsheetId: _.is.String,
+    },
+    google: {
+        sheets: _.is.Object,
+    },
+}
+title_get.produces = {
+    title: _.is.String,
+}
+
+/**
  *  API
  */
 exports.title = {}
 exports.title.set = title_set
 exports.title.set.p = title_set_p
+exports.title.get = title_get

@@ -30,21 +30,30 @@ const errors = require("iotdb-errors")
 const sheets = _.promise((self, done) => {
     const google = require("..")
 
-    _.promise(self)
-        .validate(sheets)
-        .then(google.sheets.properties)
-        .make(sd => {
-            sd.sheets = []
+    _.promise.validate(self, sheets)
 
-            sd.properties.sheets.forEach(sheet => {
-                sd.sheets.push(sheet.properties)
-            })
-        })
-        .end(done, self, "sheets")
+    self.google.sheets.spreadsheets.get({
+        spreadsheetId: self.query.spreadsheetId,
+    }, (error, result) => {
+        if (error) {
+            return done(error)
+        }
+        
+        self.google$result = result
+        self.sheets = result.data.sheets
+        
+        done(null, self)
+    })
 })
 
 sheets.method = "sheets"
 sheets.requires = {
+    query: {
+        spreadsheetId: _.is.String,
+    },
+    google: {
+        sheets: _.is.Object,
+    },
 }
 sheets.accepts = {
 }

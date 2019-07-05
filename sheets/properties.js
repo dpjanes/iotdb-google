@@ -35,14 +35,13 @@ const properties = _.promise((self, done) => {
 
     self.google.sheets.spreadsheets.get({
         spreadsheetId: self.query.spreadsheetId,
-        // field: "sheets.properties",
     }, (error, result) => {
         if (error) {
             return done(error)
         }
         
         self.google$result = result
-        self.properties = result.data
+        self.properties = result.data.properties
         
         done(null, self)
     })
