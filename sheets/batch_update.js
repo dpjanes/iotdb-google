@@ -24,6 +24,7 @@
 
 const _ = require("iotdb-helpers")
 
+const _util = require("./_util")
 
 /**
  */
@@ -34,15 +35,12 @@ const _resolve_ranges = _.promise((self, done) => {
     
     self.requests.forEach(request => {
         _.mapObject(request, (valued, key) => {
-            if (_.is.Undefined(valued.range)) {
+            if (_.is.Undefined(valued._range)) {
                 return
-            } else if (_.is.Null(valued.range)) {
-                delete valued.range
+            } else if (_.is.Null(valued._range)) {
                 valued.allSheets = true
             } else {
-                ranged[valued.range] = null
-                delete valued.range
-                valued.allSheets = true
+                ranged[valued._range] = null
             }
         })
     })
@@ -51,42 +49,29 @@ const _resolve_ranges = _.promise((self, done) => {
         return done(null, self)
     }
 
-    console.log(JSON.stringify(ranged, null, 2))
-    
     _.promise(self)
         .validate(_resolve_ranges)
 
         .then(google.sheets.sheets)
         .make(sd => {
-            const _sheetId = title => {
-                const sheet = sd.sheets.find(sheet => sheet.title === title)
-                if (sheet) {
-                    return sheet.sheetId
-                } else {
-                    return null
-                }
-            }
             _.keys(ranged)
                 .forEach(range => {
-                    const parts = range.split("!")
-                    if (parts.length === 0) {
-                        ranged[range] = {
-                            allSheets: true,
-                        }
-                    } else if (parts.length === 1) {
-                        ranged[range] = {
-                            sheetId: _sheetId(parts[0]),
-                            allSheets: false,
-                        }
-                    } else {
-                        ranged[range] = {
-                            sheetId: _sheetId(parts[0]),
-                            allSheets: false,
-                        }
-                    }
+                    ranged[range] = _util.parse_range(range, sd.sheets)
                 })
 
             console.log("RANGED", ranged)
+            self.requests.forEach(request => {
+                _.mapObject(request, (valued, key) => {
+                    if (_.is.Undefined(valued._range)) {
+                        return
+                    }
+
+                    valued.range = ranged[valued._range]
+                    delete valued._range
+
+                    request[key] = valued
+                })
+            })
         })
 
         .end(done, self)
@@ -103,6 +88,7 @@ _resolve_ranges.produces = {
 /**
  */
 const _update = _.promise((self, done) => {
+            console.log("REQUESTS", JSON.stringify(self.requests, null, 2))
     self.google.sheets.spreadsheets.batchUpdate({
         spreadsheetId: self.query.spreadsheetId,
         resource: {

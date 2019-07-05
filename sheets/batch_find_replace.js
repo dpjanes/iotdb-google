@@ -38,7 +38,7 @@ const find_replace = (find, replace, options) => _.promise(self => {
         {
             find: find,
             replacement: replace,
-            range: self.query.range || null,
+            _range: self.query.range || null,
         },
     )
 

@@ -52,7 +52,11 @@ const action = name => {
 
 const _error = error => {
     delete error.self
-    console.log("#", error)
+    if (error.errors) {
+        console.log("#", error.errors)
+    } else {
+        console.log("#", error)
+    }
 }
 
 const googled = {

@@ -32,36 +32,43 @@ const letter_to_column = _letters => _letters
         .reduce((v, number, x, vs) => v + number * Math.pow(26, vs.length - x - 1), 0) - 1
 const number_to_row = _number => parseInt(_number) - 1
 
-const parse_cell = text => {
+const parse_range = (text, sheets) => {
     const result = {
-        "_sheet": null,
+        "sheetId": null,
         "startRowIndex": null,
         "endRowIndex": null,
         "startColumnIndex": null,
         "endColumnIndex": null
     }
 
-    const match = text.match(/^([^!]+!)?([A-Za-z]*)(\d*)(:([A-Za-z]*)(\d*))?$/)
+    const match = text.match(/^(([^!]+)!)?([A-Za-z]*)(\d*)(:([A-Za-z]*)(\d*))?$/)
     if (!match) {
         return result
     }
 
 
-    result._sheet = match[1] || null
-    result.startColumnIndex = match[2] ? letter_to_column(match[2]) : null
-    result.startRowIndex = match[3] ? number_to_row(match[3]) : null
-    result.endColumnIndex = match[5] ? letter_to_column(match[5]) + 1 : match[2] ? result.startColumnIndex + 1 : null
-    result.endRowIndex = match[6] ? number_to_row(match[6]) + 1 : match[3] ? result.startRowIndex + 1 : null
+    if (sheets && match[2]) {
+        const sheet = sheets.find(sheet => sheet.title === match[2])
+        if (sheet) {
+            result.sheetId = sheet.sheetId
+        }
+    }
+
+    result.startColumnIndex = match[3] ? letter_to_column(match[3]) : null
+    result.startRowIndex = match[4] ? number_to_row(match[4]) : null
+    result.endColumnIndex = match[6] ? letter_to_column(match[6]) + 1 : match[3] ? result.startColumnIndex + 1 : null
+    result.endRowIndex = match[7] ? number_to_row(match[7]) + 1 : match[4] ? result.startRowIndex + 1 : null
     // console.log("MATCH", match, result)
 
     return result
 }
 
+/*
 const tests = [
     {
         "cell": "A1",
         "expect": {
-            "_sheet": null,
+            "sheetId": null,
             "startColumnIndex": 0,
             "startRowIndex": 0,
             "endColumnIndex": 1,
@@ -71,7 +78,7 @@ const tests = [
     {
         "cell": "Z10",
         "expect": {
-            "_sheet": null,
+            "sheetId": null,
             "startColumnIndex": 25,
             "startRowIndex": 9,
             "endColumnIndex": 26,
@@ -81,7 +88,7 @@ const tests = [
     {
         "cell": "A",
         "expect": {
-            "_sheet": null,
+            "sheetId": null,
             "startColumnIndex": 0,
             "startRowIndex": null,
             "endColumnIndex": 1,
@@ -91,7 +98,7 @@ const tests = [
     {
         "cell": "A:B",
         "expect": {
-            "_sheet": null,
+            "sheetId": null,
             "startColumnIndex": 0,
             "startRowIndex": null,
             "endColumnIndex": 2,
@@ -104,12 +111,11 @@ tests.forEach(test => {
     const assert = require("assert")
 
     console.log("-", test.cell)
-    const result = parse_cell(test.cell)
+    const result = parse_range(test.cell)
     assert.deepEqual(result, test.expect)
 
 })
 
-/*
 console.log(letter_to_column("A"))
 console.log(letter_to_column("B"))
 console.log(letter_to_column("Z"))
@@ -117,3 +123,5 @@ console.log(letter_to_column("AA"))
 console.log(letter_to_column("AZ"))
 console.log(letter_to_column("BA"))
 */
+
+exports.parse_range = parse_range
