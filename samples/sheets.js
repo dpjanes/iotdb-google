@@ -226,7 +226,7 @@ if (action("list-values-query")) {
         .then(google.auth.token)
         .then(google.sheets.initialize)
         .then(google.sheets.parse_path.p("/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE/Sheet1/A1:C1"))
-        .then(google.sheets.cell.background.p("#FF0000"))
+        .then(google.sheets.cell.background.p(_.random.choose(_.values(_.color.colord))))
         .make(sd => {
             console.log("+", "done")
         })

@@ -87,7 +87,7 @@ _resolve_ranges.produces = {
 /**
  */
 const _update = _.promise((self, done) => {
-    console.log("UPDATE", self.requests)
+    // console.log("BATCH.UPDATE", self.requests)
 
     self.google.sheets.spreadsheets.batchUpdate({
         spreadsheetId: self.query.spreadsheetId,
@@ -117,8 +117,6 @@ _update.produces = {
  */
 const batch_update = _.promise((self, done) => {
     _.promise.validate(self, batch_update)
-
-    console.log("A")
 
     _.promise(self)
         .then(_resolve_ranges)

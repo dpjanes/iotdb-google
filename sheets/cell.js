@@ -54,15 +54,18 @@ const _ = require("iotdb-helpers")
 const cell_background = _.promise((self, done) => {
     const google = require("..")
 
+    _.promise.validate(self, cell_background)
+
+    const color = new _.color.Color(self.color)
+
     _.promise(self)
-        .validate(cell_background)
         .then(google.sheets.batch.add_request.p("repeatCell", {
             cell: {
                 userEnteredFormat: {
                     backgroundColor: {
-                      red: 1.0,
-                      green: 0.0,
-                      blue: 0.0
+                      red: color.r,
+                      green: color.g,
+                      blue: color.b,
                     },
                 },
             },
