@@ -1,9 +1,9 @@
 /*
- *  sheets/index.js
+ *  sheets/add_request.js
  *
  *  David Janes
  *  IOTDB.org
- *  2018-07-29
+ *  2019-07-06
  *
  *  Copyright [2013-2019] [David P. Janes]
  *
@@ -20,27 +20,31 @@
  *  limitations under the License.
  */
 
-"use strict";
+"use strict"
 
-module.exports = Object.assign(
-    {},
-    require("./append"),
-    require("./initialize"),
-    require("./headers"),
-    require("./list"),
-    require("./list_values"),
-    require("./parse"),
-    require("./parse_path"),
-    require("./parse_range"),
-    require("./parse_url"),
-    require("./properties"),
-    require("./sheets"),
-    require("./title"),
-    {}
-)
+const _ = require("iotdb-helpers")
 
-module.exports.batch = {
-    add_request: require("./batch_add_request").add_request,
-    update: require("./batch_update").batch_update,
-    find_replace: require("./batch_find_replace").find_replace,
-}
+const assert = require("assert")
+
+/**
+ */
+const parameterized = (key, request) => _.promise((self, done) => {
+    self.requests = self.requests || []
+
+    assert.ok(_.is.String(key))
+    assert.ok(_.is.JSON(request))
+
+    self.requests.push({
+        [ key ]: request,
+    })
+})
+
+const add_request = {}
+add_request.method = "sheets.batch.add_request"
+add_request.description = "Add a request (paramterized only)"
+
+/**
+ *  API
+ */
+exports.add_request = {}
+exports.add_request.p = parameterized;

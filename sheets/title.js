@@ -31,16 +31,12 @@ const title_set = _.promise((self, done) => {
 
     _.promise(self)
         .validate(title_set)
-        .add("requests", [
-            {
-                updateSpreadsheetProperties: {
-                    properties: {
-                        title: self.title,
-                    },
-                    fields: "title",
-                },
+        .then(google.sheets.batch.add_request.p("updateSpreadsheetProperties", {
+            properties: {
+                title: self.title,
             },
-        ])
+            fields: "title",
+        }))
         .then(google.sheets.batch.update)
         .end(done, self, "google$result")
 })
