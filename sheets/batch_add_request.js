@@ -28,7 +28,7 @@ const assert = require("assert")
 
 /**
  */
-const parameterized = (key, request) => _.promise((self, done) => {
+const parameterized = (key, request) => _.promise(self => {
     self.requests = self.requests || []
 
     assert.ok(_.is.String(key))

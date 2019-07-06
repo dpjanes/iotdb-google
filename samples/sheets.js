@@ -218,6 +218,19 @@ if (action("list-values-query")) {
             console.log("+", "done", sd.title)
         })
         .catch(_error)
+} else if (action("cell.background")) {
+    _.promise({
+        googled: googled,
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.sheets.initialize)
+        .then(google.sheets.parse_path.p("/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE/Sheet1/A1:C1"))
+        .then(google.sheets.cell.background.p("#FF0000"))
+        .make(sd => {
+            console.log("+", "done")
+        })
+        .catch(_error)
 } else if (!action_name) {
     console.log("#", "action required - should be one of:", actions.join(", "))
 } else {

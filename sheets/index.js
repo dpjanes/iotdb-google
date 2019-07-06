@@ -25,6 +25,7 @@
 module.exports = Object.assign(
     {},
     require("./append"),
+    require("./cell"),
     require("./initialize"),
     require("./headers"),
     require("./list"),
