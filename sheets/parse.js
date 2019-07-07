@@ -27,7 +27,7 @@ const errors = require("iotdb-errors")
 
 /**
  */
-const parse = _.promise(self => {
+const parse = _.promise((self, done) => {
     const google = require("..")
 
     _.promise(self)
