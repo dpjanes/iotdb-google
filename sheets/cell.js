@@ -49,7 +49,7 @@ const cell_background = _.promise((self, done) => {
     const color = new _.color.Color(self.color)
 
     _.promise(self)
-        .then(google.sheets.batch.add_request.p("repeatCell", {
+        .then(google.sheets.add_request.p("repeatCell", {
             cell: {
                 userEnteredFormat: {
                     backgroundColor: {
@@ -62,7 +62,7 @@ const cell_background = _.promise((self, done) => {
             fields: "userEnteredFormat(backgroundColor)",
             _range: self.query.range || null,
         }))
-        .then(google.sheets.batch.update)
+        .then(google.sheets.batch)
         .end(done, self, "google$result")
 })
 
@@ -100,7 +100,7 @@ const cell_color = _.promise((self, done) => {
     const color = new _.color.Color(self.color)
 
     _.promise(self)
-        .then(google.sheets.batch.add_request.p("repeatCell", {
+        .then(google.sheets.add_request.p("repeatCell", {
             cell: {
                 userEnteredFormat: {
                     textFormat: {
@@ -115,7 +115,7 @@ const cell_color = _.promise((self, done) => {
             fields: "userEnteredFormat(textFormat)",
             _range: self.query.range || null,
         }))
-        .then(google.sheets.batch.update)
+        .then(google.sheets.batch)
         .end(done, self, "google$result")
 })
 
@@ -151,7 +151,7 @@ const cell_size = _.promise((self, done) => {
     _.promise.validate(self, cell_size)
 
     _.promise(self)
-        .then(google.sheets.batch.add_request.p("repeatCell", {
+        .then(google.sheets.add_request.p("repeatCell", {
             cell: {
                 userEnteredFormat: {
                     textFormat: {
@@ -162,7 +162,7 @@ const cell_size = _.promise((self, done) => {
             fields: "userEnteredFormat(textFormat)",
             _range: self.query.range || null,
         }))
-        .then(google.sheets.batch.update)
+        .then(google.sheets.batch)
         .end(done, self, "google$result")
 })
 
@@ -199,7 +199,7 @@ const _cell_style = style => _.promise((self, done) => {
     _.promise.validate(self, _cell_style)
 
     _.promise(self)
-        .then(google.sheets.batch.add_request.p("repeatCell", {
+        .then(google.sheets.add_request.p("repeatCell", {
             cell: {
                 userEnteredFormat: {
                     textFormat: {
@@ -210,7 +210,7 @@ const _cell_style = style => _.promise((self, done) => {
             fields: "userEnteredFormat(textFormat)",
             _range: self.query.range || null,
         }))
-        .then(google.sheets.batch.update)
+        .then(google.sheets.batch)
         .end(done, self, "google$result")
 })
 

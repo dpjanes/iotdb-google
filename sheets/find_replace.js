@@ -50,12 +50,12 @@ const find_replace = _.promise((self, done) => {
     }
 
     _.promise(self)
-        .then(google.sheets.batch.add_request.p("findReplace", request))
-        .then(google.sheets.batch.update)
+        .then(google.sheets.add_request.p("findReplace", request))
+        .then(google.sheets.batch)
         .end(done, self, "google$result,requests")
 })
 
-find_replace.method = "sheets.batch.update";
+find_replace.method = "sheets.batch";
 find_replace.requires = {
     query: _.is.Dictionary,
     google: {

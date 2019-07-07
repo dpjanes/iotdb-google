@@ -40,7 +40,7 @@ const parameterized = (key, request) => _.promise(self => {
 })
 
 const add_request = {}
-add_request.method = "sheets.batch.add_request"
+add_request.method = "sheets.add_request"
 add_request.description = "Add a request (paramterized only)"
 
 /**

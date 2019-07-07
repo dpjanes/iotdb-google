@@ -1,5 +1,5 @@
 /*
- *  sheets/batch_update.js
+ *  sheets/batch.js
  *
  *  David Janes
  *  IOTDB.org
@@ -117,8 +117,8 @@ _update.produces = {
 
 /**
  */
-const batch_update = _.promise((self, done) => {
-    _.promise.validate(self, batch_update)
+const batch = _.promise((self, done) => {
+    _.promise.validate(self, batch)
 
     _.promise(self)
         .then(_resolve_ranges)
@@ -126,8 +126,8 @@ const batch_update = _.promise((self, done) => {
         .end(done, self, "google$result")
 })
 
-batch_update.method = "sheets.batch.update";
-batch_update.requires = {
+batch.method = "sheets.batch";
+batch.requires = {
     requests: _.is.Array.of.JSON,
     query: {
         spreadsheetId: _.is.String,
@@ -136,11 +136,11 @@ batch_update.requires = {
         sheets: _.is.Object,
     },
 }
-batch_update.produces = {
+batch.produces = {
     google$result: _.is.Dictionary,
 }
 
 /**
  *  API
  */
-exports.batch_update = batch_update;
+exports.batch = batch;

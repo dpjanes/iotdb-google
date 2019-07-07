@@ -24,7 +24,9 @@
 
 module.exports = Object.assign(
     {},
+    require("./add_request"),
     require("./append"),
+    require("./batch"),
     require("./cell"),
     require("./find_replace"),
     require("./initialize"),
@@ -40,8 +42,3 @@ module.exports = Object.assign(
     require("./title"),
     {}
 )
-
-module.exports.batch = {
-    add_request: require("./batch_add_request").add_request,
-    update: require("./batch_update").batch_update,
-}

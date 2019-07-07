@@ -123,19 +123,6 @@ if (action("list-values-query")) {
             console.log("+", "done")
         })
         .catch(_error)
-} else if (action("batch.update")) {
-    _.promise({
-        googled: googled,
-    })
-        .then(google.initialize)
-        .then(google.auth.token)
-        .then(google.sheets.initialize)
-        .then(google.sheets.parse_path.p("/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE/Sheet1/A1:C"))
-        .then(google.sheets.batch.update)
-        .make(sd => {
-            console.log("+", "done")
-        })
-        .catch(_error)
 } else if (action("find_replace_regex")) {
     _.promise({
         googled: googled,
@@ -198,7 +185,7 @@ if (action("list-values-query")) {
         .then(google.auth.token)
         .then(google.sheets.initialize)
         .then(google.sheets.parse_path.p("/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE/Sheet1/A1:C1"))
-        .then(google.sheets.title.set.p("Hello, World"))
+        .then(google.sheets.title.set.p("Hello, World: " + _.timestamp.make()))
         .make(sd => {
             console.log("+", "done")
         })
