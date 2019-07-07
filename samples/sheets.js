@@ -243,6 +243,31 @@ if (action("list-values-query")) {
             console.log("+", "done")
         })
         .catch(_error)
+} else if (action("batch")) {
+    _.promise({
+        googled: googled,
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.sheets.initialize)
+        .then(google.sheets.parse_path.p("/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE"))
+
+        .add("google$batch", true)
+
+        .then(google.sheets.parse_range.p("Sheet1!A1:F1"))
+        .then(google.sheets.cell.underline.p(true))
+
+        .then(google.sheets.parse_range.p("A1:A7"))
+        .then(google.sheets.find_replace.p("Joe", "Joseph"))
+        .then(google.sheets.cell.background.p(_.random.choose(_.values(_.color.colord))))
+        .then(google.sheets.cell.color.p(_.random.choose(_.values(_.color.colord))))
+
+        .then(google.sheets.batch)
+
+        .make(sd => {
+            console.log("+", "done")
+        })
+        .catch(_error)
 } else if (!action_name) {
     console.log("#", "action required - should be one of:", actions.join(", "))
 } else {

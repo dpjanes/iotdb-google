@@ -23,6 +23,7 @@
 "use strict"
 
 const _ = require("iotdb-helpers")
+const errors = require("iotdb-errors")
 
 const A = "A".charCodeAt(0)
 const letter_to_column = _letters => _letters
@@ -50,6 +51,8 @@ const parse_range = (text, sheets) => {
         const sheet = sheets.find(sheet => sheet.title === match[2])
         if (sheet) {
             result.sheetId = sheet.sheetId
+        } else {
+            throw new errors.Invalid("unknown sheet: " + match[2])
         }
     }
 

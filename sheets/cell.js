@@ -90,7 +90,7 @@ const cell_background_p = _color => _.promise((self, done) => {
     _.promise(self) 
         .add("color", _color)
         .then(cell_background)
-        .end(done, self, "google$result")
+        .end(done, self, "google$result,requests")
 })
 
 /**
@@ -146,7 +146,7 @@ const cell_color_p = _color => _.promise((self, done) => {
     _.promise(self) 
         .add("color", _color)
         .then(cell_color)
-        .end(done, self, "google$result")
+        .end(done, self, "google$result,requests")
 })
 
 /**
@@ -196,7 +196,7 @@ const cell_size_p = _size => _.promise((self, done) => {
     _.promise(self) 
         .add("size", _size)
         .then(cell_size)
-        .end(done, self, "google$result")
+        .end(done, self, "google$result,requests")
 })
 
 /**
@@ -229,7 +229,7 @@ const _cell_style_p = style => _style => _.promise((self, done) => {
     _.promise(self) 
         .add(style, _style)
         .then(_cell_style(style))
-        .end(done, self, "google$result")
+        .end(done, self, "google$result,requests")
 })
 
 
