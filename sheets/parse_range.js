@@ -30,7 +30,7 @@ const errors = require("iotdb-errors")
 const parse_range = _.promise(self => {
     _.promise.validate(self, parse_range)
 
-    self.query.range = Object.assign(
+    self.query = Object.assign(
         {},
         self.query,
         { range: self.range }

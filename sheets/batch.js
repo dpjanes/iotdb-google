@@ -37,10 +37,9 @@ const _resolve_ranges = _.promise((self, done) => {
     
     self.requests.forEach(request => {
         _.mapObject(request, (valued, key) => {
-            /*
             if (!_.is.Dictionary(valued)) {
                 return
-            } else */ if (_.is.Undefined(valued._range)) {
+            } else if (_.is.Undefined(valued._range)) {
                 return
             } else if (_.is.Null(valued._range)) {
                 valued.allSheets = true
@@ -70,13 +69,12 @@ const _resolve_ranges = _.promise((self, done) => {
                     if (_.is.Undefined(valued._range)) {
                         return
                     }
-                    /*
+
                     if (!_.is.Dictionary(valued)) {
                         return
                     } 
 
-                    // request[key] = _.d.clone(valued)
-                    */
+                    request[key] = _.d.clone(valued)
 
                     valued.range = ranged[valued._range]
                     delete valued._range

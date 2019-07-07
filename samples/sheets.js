@@ -256,11 +256,11 @@ if (action("list-values-query")) {
 
         .then(google.sheets.parse_range.p("Sheet1!A1:F1"))
         .then(google.sheets.cell.underline.p(true))
+        .then(google.sheets.cell.background.p(_.random.choose(_.values(_.color.colord))))
+        .then(google.sheets.cell.color.p(_.random.choose(_.values(_.color.colord))))
 
         .then(google.sheets.parse_range.p("A1:A7"))
         .then(google.sheets.find_replace.p("Joe", "Joseph"))
-        .then(google.sheets.cell.background.p(_.random.choose(_.values(_.color.colord))))
-        .then(google.sheets.cell.color.p(_.random.choose(_.values(_.color.colord))))
 
         .then(google.sheets.batch)
 
