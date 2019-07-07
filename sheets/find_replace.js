@@ -51,7 +51,7 @@ const find_replace = _.promise((self, done) => {
 
     _.promise(self)
         .then(google.sheets.add_request.p("findReplace", request))
-        .then(google.sheets.batch)
+        .conditional(!self.google$batch, google.sheets.batch)
         .end(done, self, "google$result,requests")
 })
 
@@ -66,6 +66,7 @@ find_replace.requires = {
 }
 find_replace.accepts = {
     requests: _.is.Array,
+    google$batch: _.is.Boolean,
 }
 find_replace.produces = {
     google$result: _.is.Dictionary,

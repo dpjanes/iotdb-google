@@ -62,8 +62,8 @@ const cell_background = _.promise((self, done) => {
             fields: "userEnteredFormat(backgroundColor)",
             _range: self.query.range || null,
         }))
-        .then(google.sheets.batch)
-        .end(done, self, "google$result")
+        .conditional(!self.google$batch, google.sheets.batch)
+        .end(done, self, "google$result,requests")
 })
 
 cell_background.method = "sheets.cell.background"
@@ -76,6 +76,9 @@ cell_background.requires = {
     google: {
         sheets: _.is.Object,
     },
+}
+cell_background.accepts = {
+    google$batch: _.is.Boolean,
 }
 cell_background.produces = {
     google$result: _.is.Dictionary,
@@ -115,8 +118,8 @@ const cell_color = _.promise((self, done) => {
             fields: "userEnteredFormat(textFormat)",
             _range: self.query.range || null,
         }))
-        .then(google.sheets.batch)
-        .end(done, self, "google$result")
+        .conditional(!self.google$batch, google.sheets.batch)
+        .end(done, self, "google$result,requests")
 })
 
 cell_color.method = "sheets.cell.color"
@@ -129,6 +132,9 @@ cell_color.requires = {
     google: {
         sheets: _.is.Object,
     },
+}
+cell_color.accepts = {
+    google$batch: _.is.Boolean,
 }
 cell_color.produces = {
     google$result: _.is.Dictionary,
@@ -162,8 +168,8 @@ const cell_size = _.promise((self, done) => {
             fields: "userEnteredFormat(textFormat)",
             _range: self.query.range || null,
         }))
-        .then(google.sheets.batch)
-        .end(done, self, "google$result")
+        .conditional(!self.google$batch, google.sheets.batch)
+        .end(done, self, "google$result,requests")
 })
 
 cell_size.method = "sheets.cell.size"
@@ -176,6 +182,9 @@ cell_size.requires = {
     google: {
         sheets: _.is.Object,
     },
+}
+cell_size.accepts = {
+    google$batch: _.is.Boolean,
 }
 cell_size.produces = {
     google$result: _.is.Dictionary,
@@ -210,8 +219,8 @@ const _cell_style = style => _.promise((self, done) => {
             fields: "userEnteredFormat(textFormat)",
             _range: self.query.range || null,
         }))
-        .then(google.sheets.batch)
-        .end(done, self, "google$result")
+        .conditional(!self.google$batch, google.sheets.batch)
+        .end(done, self, "google$result,requests")
 })
 
 /**

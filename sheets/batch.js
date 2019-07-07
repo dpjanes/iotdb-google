@@ -123,7 +123,10 @@ const batch = _.promise((self, done) => {
     _.promise(self)
         .then(_resolve_ranges)
         .then(_update)
-        .end(done, self, "google$result")
+        .make(sd => {
+            sd.requests = []
+        })
+        .end(done, self, "google$result,requests")
 })
 
 batch.method = "sheets.batch";
@@ -138,6 +141,7 @@ batch.requires = {
 }
 batch.produces = {
     google$result: _.is.Dictionary,
+    requests: _.is.Array,
 }
 
 /**

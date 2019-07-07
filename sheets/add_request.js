@@ -31,12 +31,19 @@ const assert = require("assert")
 const parameterized = (key, request) => _.promise(self => {
     self.requests = self.requests || []
 
-    assert.ok(_.is.String(key))
-    assert.ok(_.is.JSON(request))
+    if (_.is.Dictionary(key)) {
+        assert.ok(_.is.JSON(key))
 
-    self.requests.push({
-        [ key ]: request,
-    })
+        self.requests.push(key)
+    } else {
+        assert.ok(_.is.String(key))
+        assert.ok(_.is.JSON(request))
+
+        self.requests.push({
+            [ key ]: request,
+        })
+    }
+
 })
 
 const add_request = {}

@@ -37,8 +37,8 @@ const title_set = _.promise((self, done) => {
             },
             fields: "title",
         }))
-        .then(google.sheets.batch)
-        .end(done, self, "google$result")
+        .conditional(!self.google$batch, google.sheets.batch)
+        .end(done, self, "google$result,requests")
 })
 
 title_set.method = "sheets.title.set"
@@ -50,6 +50,9 @@ title_set.requires = {
     google: {
         sheets: _.is.Object,
     },
+}
+title_set.accepts = {
+    google$batch: _.is.Boolean,
 }
 title_set.produces = {
     google$result: _.is.Dictionary,
