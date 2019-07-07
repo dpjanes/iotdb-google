@@ -23,10 +23,67 @@
 "use strict"
 
 const _ = require("iotdb-helpers")
+const errors = require("iotdb-errors")
 
 const _util = require("./_util")
 const logger = require("../logger")(__filename)
 
+/**
+ */
+const _merge_similar = _.promise(self => {
+    self.requests = [ ... self.requests ]
+
+    const seend = {}
+
+    self.requests.forEach(request => {
+        _.mapObject(request, (valued, key) => {
+            if (!_.is.Dictionary(valued)) {
+                return
+            }
+
+            const mkey = [ key, valued._range || "" ].join("@@")
+
+            if (seend[mkey]) {
+                const fields_1 = valued.fields
+                const fields_2 = seend[mkey].fields
+
+                seend[mkey] = _.d.compose.deep(valued, seend[mkey])
+                delete request[key]
+
+                if (fields_1 && fields_2 && (fields_1 !== fields_2)) {
+                    const match_1 = fields_1.match(/^(.*)[(](.*)[)]/)
+                    const match_2 = fields_2.match(/^(.*)[(](.*)[)]/)
+
+                    if (match_1 && match_2) {
+                        if (match_1[1] !== match_2[1]) {
+                            throw new errors.Invalid("don't know how to merge '" + fields_1 + "' and '" + fields_2 + "'")
+                        }
+
+                        const fields = Array.from(new Set(_.flatten([ match_1[2].split(","), match_2[2].split(",") ])))
+
+                        seend[mkey].fields = `${match_1[1]}(${fields.join(",")})`
+                    }
+
+                }
+            } else {
+                seend[mkey] = valued
+            }
+        })
+    })
+
+    self.requests.forEach(request => {
+        _.mapObject(request, (valued, key) => {
+            if (!_.is.Dictionary(valued)) {
+                return
+            }
+
+            const mkey = [ key, valued._range || "" ].join("@@")
+            request[key] = seend[mkey]
+        })
+    })
+
+    self.requests = self.requests.filter(r => !_.is.Empty(r))
+})
 
 /**
  */
@@ -98,7 +155,9 @@ _resolve_ranges.produces = {
 /**
  */
 const _update = _.promise((self, done) => {
-    console.log("BATCH.UPDATE", JSON.stringify(self.requests, null, 2))
+    if (self.verbose) {
+        console.log("-", batch.method, "request", JSON.stringify(self.requests, null, 2))
+    }
 
     self.google.sheets.spreadsheets.batchUpdate({
         spreadsheetId: self.query.spreadsheetId,
@@ -130,6 +189,7 @@ const batch = _.promise((self, done) => {
     _.promise.validate(self, batch)
 
     _.promise(self)
+        .then(_merge_similar)
         .then(_resolve_ranges)
         .then(_update)
         .make(sd => {
