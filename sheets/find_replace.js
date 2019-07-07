@@ -27,14 +27,12 @@ const _ = require("iotdb-helpers")
 /**
  *  https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/request#findreplacerequest
  */
-const find_replace = _.promise(self => {
+const find_replace = _.promise((self, done) => {
+    const google = require("..")
+
     _.promise.validate(self, find_replace)
 
-    self.requests = self.requests || []
-
     const request = Object.assign(
-        {},
-        self.google$options || {},
         {
             find: self.find,
             replacement: self.replace,
@@ -42,6 +40,7 @@ const find_replace = _.promise(self => {
         {
             _range: self.query.range || null,
         },
+        self.google$options || {},
     )
 
     if (_.is.RegExp(request.find)) {
@@ -50,9 +49,10 @@ const find_replace = _.promise(self => {
         request.searchByRegex = true
     }
 
-    self.requests.push({
-        findReplace: request,
-    })
+    _.promise(self)
+        .then(google.sheets.batch.add_request.p("findReplace", request))
+        .then(google.sheets.batch.update)
+        .end(done, self, "google$result,requests")
 })
 
 find_replace.method = "sheets.batch.update";
@@ -61,11 +61,14 @@ find_replace.requires = {
     google: {
         sheets: _.is.Object,
     },
+    find: [ _.is.String, _.is.RegExp ],
+    replace: _.is.String,
 }
 find_replace.accepts = {
     requests: _.is.Array,
 }
 find_replace.produces = {
+    google$result: _.is.Dictionary,
     requests: _.is.Array,
 }
 
@@ -79,7 +82,7 @@ const parameterized = (find, replace, options) => _.promise((self, done) => {
             google$options: options,
         })
         .then(find_replace)
-        .end(done, self, "requests")
+        .end(done, self, "requests,google$result")
 })
 
 /**

@@ -26,6 +26,7 @@ module.exports = Object.assign(
     {},
     require("./append"),
     require("./cell"),
+    require("./find_replace"),
     require("./initialize"),
     require("./headers"),
     require("./list"),
@@ -43,5 +44,4 @@ module.exports = Object.assign(
 module.exports.batch = {
     add_request: require("./batch_add_request").add_request,
     update: require("./batch_update").batch_update,
-    find_replace: require("./batch_find_replace").find_replace,
 }

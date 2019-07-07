@@ -25,6 +25,8 @@
 const _ = require("iotdb-helpers")
 
 const _util = require("./_util")
+const logger = require("../logger")(__filename)
+
 
 /**
  */
@@ -87,7 +89,7 @@ _resolve_ranges.produces = {
 /**
  */
 const _update = _.promise((self, done) => {
-    // console.log("BATCH.UPDATE", self.requests)
+    // console.log("BATCH.UPDATE", JSON.stringify(self.requests, null, 2))
 
     self.google.sheets.spreadsheets.batchUpdate({
         spreadsheetId: self.query.spreadsheetId,

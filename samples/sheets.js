@@ -144,8 +144,7 @@ if (action("list-values-query")) {
         .then(google.auth.token)
         .then(google.sheets.initialize)
         .then(google.sheets.parse_path.p("/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE/Sheet1/A"))
-        .then(google.sheets.batch.find_replace.p(/J.*$/, "JJJJ"))
-        .then(google.sheets.batch.update)
+        .then(google.sheets.find_replace.p(/J.*$/, "JJJJ"))
         .make(sd => {
             console.log("+", "done")
         })
@@ -186,8 +185,7 @@ if (action("list-values-query")) {
         .then(google.sheets.parse_url.p(
             "https://docs.google.com/spreadsheets/d/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE/edit#gid=0"))
         .then(google.sheets.parse_range.p("A1:A7"))
-        .then(google.sheets.batch.find_replace.p("Joe", "Joseph"))
-        .then(google.sheets.batch.update)
+        .then(google.sheets.find_replace.p("Joe", "Joseph"))
         .make(sd => {
             console.log("+", "done")
         })
@@ -227,6 +225,33 @@ if (action("list-values-query")) {
         .then(google.sheets.initialize)
         .then(google.sheets.parse_path.p("/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE/Sheet1/A1:C1"))
         .then(google.sheets.cell.background.p(_.random.choose(_.values(_.color.colord))))
+        .make(sd => {
+            console.log("+", "done")
+        })
+        .catch(_error)
+} else if (action("cell.color")) {
+    _.promise({
+        googled: googled,
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.sheets.initialize)
+        .then(google.sheets.parse_path.p("/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE/Sheet1/A1:C1"))
+        .then(google.sheets.cell.color.p(_.random.choose(_.values(_.color.colord))))
+        .make(sd => {
+            console.log("+", "done")
+        })
+        .catch(_error)
+} else if (action("style")) {
+    _.promise({
+        googled: googled,
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.sheets.initialize)
+        .then(google.sheets.parse_path.p("/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE/Sheet1/A1:C1"))
+        .then(google.sheets.cell.bold.p(true))
+        // .then(google.sheets.cell.italic.p(true))
         .make(sd => {
             console.log("+", "done")
         })

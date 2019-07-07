@@ -27,18 +27,8 @@ const _ = require("iotdb-helpers")
     /*
         "cell": {
           "userEnteredFormat": {
-            "backgroundColor": {
-              "red": 0.0,
-              "green": 0.0,
-              "blue": 0.0
-            },
             "horizontalAlignment" : "CENTER",
             "textFormat": {
-              "foregroundColor": {
-                "red": 1.0,
-                "green": 1.0,
-                "blue": 1.0
-              },
               "fontSize": 12,
               "bold": true
             }
@@ -100,6 +90,140 @@ const cell_background_p = _color => _.promise((self, done) => {
         .end(done, self, "google$result")
 })
 
+/**
+ */
+const cell_color = _.promise((self, done) => {
+    const google = require("..")
+
+    _.promise.validate(self, cell_color)
+
+    const color = new _.color.Color(self.color)
+
+    _.promise(self)
+        .then(google.sheets.batch.add_request.p("repeatCell", {
+            cell: {
+                userEnteredFormat: {
+                    textFormat: {
+                        foregroundColor: {
+                            red: color.r,
+                            green: color.g,
+                            blue: color.b,
+                        },
+                    },
+                },
+            },
+            fields: "userEnteredFormat(textFormat)",
+            _range: self.query.range || null,
+        }))
+        .then(google.sheets.batch.update)
+        .end(done, self, "google$result")
+})
+
+cell_color.method = "sheets.cell.color"
+cell_color.description = "Set cell color color"
+cell_color.requires = {
+    color: _.is.String,
+    query: {
+        spreadsheetId: _.is.String,
+    },
+    google: {
+        sheets: _.is.Object,
+    },
+}
+cell_color.produces = {
+    google$result: _.is.Dictionary,
+}
+
+/**
+ */
+const cell_color_p = _color => _.promise((self, done) => {
+    _.promise(self) 
+        .add("color", _color)
+        .then(cell_color)
+        .end(done, self, "google$result")
+})
+
+/**
+ */
+const cell_size = _.promise((self, done) => {
+    const google = require("..")
+
+    _.promise.validate(self, cell_size)
+
+    _.promise(self)
+        .then(google.sheets.batch.add_request.p("repeatCell", {
+            cell: {
+                userEnteredFormat: {
+                    textFormat: {
+                        fontSize: self.size ? true : false,
+                    },
+                },
+            },
+            fields: "userEnteredFormat(textFormat)",
+            _range: self.query.range || null,
+        }))
+        .then(google.sheets.batch.update)
+        .end(done, self, "google$result")
+})
+
+cell_size.method = "sheets.cell.size"
+cell_size.description = "Set cell text size"
+cell_size.requires = {
+    size: _.is.Number, 
+    query: {
+        spreadsheetId: _.is.String,
+    },
+    google: {
+        sheets: _.is.Object,
+    },
+}
+cell_size.produces = {
+    google$result: _.is.Dictionary,
+}
+
+/**
+ */
+const cell_size_p = _size => _.promise((self, done) => {
+    _.promise(self) 
+        .add("size", _size)
+        .then(cell_size)
+        .end(done, self, "google$result")
+})
+
+/**
+ *  i.e. bold, italic, strikethrough, underline
+ */
+const _cell_style = style => _.promise((self, done) => {
+    const google = require("..")
+
+    _.promise.validate(self, _cell_style)
+
+    _.promise(self)
+        .then(google.sheets.batch.add_request.p("repeatCell", {
+            cell: {
+                userEnteredFormat: {
+                    textFormat: {
+                        [ style ]: self[style] ? true : false,
+                    },
+                },
+            },
+            fields: "userEnteredFormat(textFormat)",
+            _range: self.query.range || null,
+        }))
+        .then(google.sheets.batch.update)
+        .end(done, self, "google$result")
+})
+
+/**
+ */
+const _cell_style_p = style => _style => _.promise((self, done) => {
+    _.promise(self) 
+        .add(style, _style)
+        .then(_cell_style(style))
+        .end(done, self, "google$result")
+})
+
+
 
 /**
  *  API
@@ -107,3 +231,16 @@ const cell_background_p = _color => _.promise((self, done) => {
 exports.cell = {}
 exports.cell.background = cell_background
 exports.cell.background.p = cell_background_p
+exports.cell.color = cell_color
+exports.cell.color.p = cell_color_p
+exports.cell.size = cell_size
+exports.cell.size.p = cell_size_p
+
+exports.cell.bold = _cell_style("bold")
+exports.cell.bold.p = _cell_style_p("bold")
+exports.cell.italic = _cell_style("italic")
+exports.cell.italic.p = _cell_style_p("italic")
+exports.cell.strikethrough = _cell_style("strikethrough")
+exports.cell.strikethrough.p = _cell_style_p("strikethrough")
+exports.cell.underline = _cell_style("underline")
+exports.cell.underline.p = _cell_style_p("underline")
