@@ -1,5 +1,5 @@
 # iotdb-google
-POP Google wrapper
+Pipe-Oriented Programming Google wrapper
 
 ## Credentials
 
@@ -50,6 +50,16 @@ version of this sample.
     const _ = require("iotdb-helpers")
     const google = require("iotdb-google")
 
+    let credentials
+    let token
+
+    try {
+        credentials = require("./credentials.json")
+        token = require("./token.json")
+    } catch (x) {
+        console.log("#", "use bin/google-token to get tokens first")
+    }
+
     _.promise({
         googled: {
             credentials: credentials,   // loaded from somewhere
@@ -59,11 +69,10 @@ version of this sample.
         .then(google.initialize)
         .then(google.auth.token)
         .then(google.sheets.initialize)
-        .then(google.sheets.list_values.p({
-            spreadsheetId: "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms",
-            range: "Class Data!A1:E",
-        }))
+
+        .then(google.sheets.list.p("/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/Class Data!A1:E"))
         .then(google.sheets.headers.first)
+
         .make(sd => {
             console.log("+", JSON.stringify(sd.jsons, null, 2))
         })
@@ -72,3 +81,38 @@ version of this sample.
             console.log("#", error)
         })
 
+Here's an example of manipulating the spreadsheet
+
+    _.promise({
+        googled: {
+            credentials: credentials,   // loaded from somewhere
+            token: token,               // loaded from somewhere
+        },
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.sheets.initialize)
+        .then(google.sheets.parse.p("/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE"))
+
+        .add("google$batch", true)
+
+        // change the header
+        .then(google.sheets.parse.p("Sheet1!A1:F1"))
+        .then(google.sheets.cell.underline.p(true))
+        .then(google.sheets.cell.background.p(_.random.choose(_.values(_.color.colord))))
+        .then(google.sheets.cell.color.p(_.random.choose(_.values(_.color.colord))))
+
+        // manipulate the first row
+        .then(google.sheets.parse_range.p("A1:A7"))
+        .then(google.sheets.find_replace.p(/^J.*$/, "Joseph"))
+
+        // do all those commands at once (uses "google$batch")
+        .then(google.sheets.batch)
+
+        .make(sd => {
+            console.log("+", "done")
+        })
+        .catch(error => {
+            delete error.self
+            console.log("#", error)
+        })
