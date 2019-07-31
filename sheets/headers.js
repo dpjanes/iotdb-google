@@ -24,17 +24,10 @@
 
 const _ = require("iotdb-helpers")
 
-const assert = require("assert")
-
 /**
- *  Requires: self.jsons, self.headers
- *  Produces: self.jsons
  */
-const headers = _.promise.make(self => {
-    const method = "sheets.headers";
-
-    assert.ok(_.is.Array(self.jsons), `${method}: expected self.jsons to be Array`)
-    assert.ok(_.is.Array(self.headers), `${method}: expected self.headers to be Array`)
+const headers = _.promise(self => {
+    _.promise.validate(self, headers)
 
     self.jsons = self.jsons
         .map(row => _.object(self.headers, row))
@@ -48,36 +41,52 @@ const headers = _.promise.make(self => {
         })
 })
 
+headers.method = "sheets.headers"
+headers.requires = {
+    jsons: _.is.Array,
+    headers: _.is.Array,
+}
+headers.accepts = {
+}
+headers.produces = {
+}
+
 /**
  */
-const parameterized = _headers => _.promise.make((self, done) => {
-    _.promise.make(self)
-        .then(_.promise.add("headers", _headers))
+const parameterized = headers => _.promise((self, done) => {
+    _.promise(self)
+        .add("headers", headers)
         .then(headers)
-        .then(_.promise.done(done, self, "jsons"))
-        .catch(done)
+        .end(done, self, "jsons")
 })
 
 /**
  */
-const first = _.promise.make((self, done) => {
-    const method = "sheets.headers.first";
-
-    assert.ok(_.is.Array(self.jsons), `${method}: expected self.jsons to be Array`)
+const first = _.promise((self, done) => {
+    _.promise.validate(self, first)
 
     if (!self.jsons.length) {
         self.jsons = []
         return done(null, self)
     }
 
-    const _headers = self.jsons.shift()
-    
-    _.promise.make(self)
-        .then(_.promise.add("headers", _headers))
+    _.promise(self)
+        .add("headers", self.jsons.shift())
         .then(headers)
-        .then(_.promise.done(done, self, "jsons"))
-        .catch(done)
+        .end(done, self, "jsons")
 })
+
+first.method = "sheets.headers.first"
+first.description = `
+    Warning: mutates self.jsons`
+first.requires = {
+    jsons: _.is.Array,
+}
+first.accepts = {
+}
+first.produces = {
+    jsons: _.is.Array,
+}
 
 /**
  *  API
