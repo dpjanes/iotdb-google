@@ -60,10 +60,65 @@ sheets.requires = {
 sheets.accepts = {
 }
 sheets.produces = {
-    sheets: _.is.Dictionary,
+    sheets: _.is.Array,
+}
+
+/**
+ */
+const select = _.promise(self => {
+    _.promise.validate(self, select)
+
+    self.sheet = self.sheets.find(sheet => sheet.title === self.title) || null
+})
+
+select.method = "sheets.select"
+select.description = `Select a sheet by title`
+select.requires = {
+    sheets: _.is.Array.of.Dictionary,
+    title: _.is.String,
+}
+select.accepts = {
+}
+select.produces = {
+    sheet: _.is.Dictionary,
+}
+
+/**
+ */
+const select_p = title => _.promise((self, done) => {
+    _.promise(self) 
+        .add("title", title)
+        .then(select)
+        .end(done, self)
+})
+
+/**
+ */
+const query = _.promise(self => {
+    _.promise.validate(self, query)
+
+    if (!self.sheet) {
+        throw new errors.NotFound("no sheet was selected")
+    }
+
+    self.query = _.d.clone(self.query)
+    self.query.range = self.sheet.title
+})
+
+query.method = "sheets.query"
+query.requires = {
+    query: _.is.Dictionary,
+}
+query.accepts = {
+    sheet: _.is.Dictionary,
+}
+query.produces = {
 }
 
 /**
  *  API
  */
-exports.sheets = sheets;
+exports.sheets = sheets
+exports.sheets.select = select
+exports.sheets.select.p = select_p
+exports.sheets.query = query
