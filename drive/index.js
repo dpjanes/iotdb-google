@@ -20,11 +20,13 @@
  *  limitations under the License.
  */
 
-"use strict";
+"use strict"
 
 module.exports = Object.assign(
     {},
     require("./initialize"),
+    require("./parse"),
+    require("./parse_url"),
     {}
 )
 

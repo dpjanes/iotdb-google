@@ -27,19 +27,17 @@ const _ = require("iotdb-helpers")
 /**
  */
 const get = _.promise((self, done) => {
-    const doc = "1vgWWtt4JEyNiGVGTs9tcOfRdZcg9UJGbIDWGNYpR0kc"
-    const alt = "html"
+    _.promise.validate(self, get)
 
     const fs = require("fs")
     const dest = fs.createWriteStream('/Users/david/xxx.html')
 
     self.google.drive.files.export({
-      fileId: doc,
-      mimeType: "text/html",
+        fileId: self.fileId,
+        mimeType: self.document_media_type || "text/html",
     }, {
-            responseType: 'stream'
-        }, (error, response) => {
-        console.log("A")
+        responseType: "stream"
+    }, (error, response) => {
         if (error) {
             return done(error)
         }
@@ -57,29 +55,32 @@ const get = _.promise((self, done) => {
 
         console.log("B")
     })
-    /*
-    */
 })
 
 get.method = "drive.file.get"
 get.requires = {
+    fileId: _.is.String,
     google: {
         drive: _.is.Object,
     },
 }
 get.accepts = {
+    document_media_type: _.is.String,
 }
 get.produces = {
 }
 
 /**
  */
-const parameterized = (query, alt) => _.promise((self, done) => {
+const parameterized = (path, document_media_type) => _.promise((self, done) => {
+    const google = require("..")
+
     _.promise(self) 
-        .add({
-            query: query || null,
-            alt: alt || self.alt || null,
+        .then(google.drive.parse.p(path || self.path || null))
+        .make(sd => {
+            console.log("DDD", sd.fileId)
         })
+        .add("document_media_type", document_media_type || self.document_media_type || "text/html")
         .then(get)
         .end(done, self)
 })

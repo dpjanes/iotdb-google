@@ -74,7 +74,7 @@ if (action("file.get")) {
         .then(google.drive.initialize)
         .then(google.drive.file.get.p(
             "https://docs.google.com/document/d/1vgWWtt4JEyNiGVGTs9tcOfRdZcg9UJGbIDWGNYpR0kc/edit",
-            "html"
+            "text/html"
         ))
         .make(sd => {
             console.log("+", JSON.stringify(sd.document, null, 2))
