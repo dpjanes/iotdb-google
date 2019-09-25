@@ -1,9 +1,9 @@
 /*
- *  sheets/initialize.js
+ *  drive/initialize.js
  *
  *  David Janes
  *  IOTDB.org
- *  2018-07-29
+ *  2019-09-25
  *
  *  Copyright [2013-2019] [David P. Janes]
  *
@@ -32,13 +32,13 @@ const initialize = _.promise(self => {
     const google = require("googleapis").google
 
     self.google = _.d.clone(self.google)
-    self.google.sheets = google.sheets({
-        version: "v4",
+    self.google.drive = google.drive({
+        version: "v3",
         auth: self.google.client
     });
 })
 
-initialize.method = "sheets.initialize"
+initialize.method = "drive.initialize"
 initialize.requires = {
     google: {
         client: _.is.Object,

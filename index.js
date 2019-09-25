@@ -27,3 +27,4 @@ exports.initialize = require("./initialize").initialize
 exports.auth = require("./auth")
 exports.sheets = require("./sheets")
 exports.chat = require("./chat")
+exports.drive = require("./drive")

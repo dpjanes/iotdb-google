@@ -1,9 +1,9 @@
 /*
- *  sheets/initialize.js
+ *  drive/index.js
  *
  *  David Janes
  *  IOTDB.org
- *  2018-07-29
+ *  2019-09-25
  *
  *  Copyright [2013-2019] [David P. Janes]
  *
@@ -20,36 +20,10 @@
  *  limitations under the License.
  */
 
-"use strict"
+"use strict";
 
-const _ = require("iotdb-helpers")
-
-/**
- */
-const initialize = _.promise(self => {
-    _.promise.validate(self, initialize)
-
-    const google = require("googleapis").google
-
-    self.google = _.d.clone(self.google)
-    self.google.sheets = google.sheets({
-        version: "v4",
-        auth: self.google.client
-    });
-})
-
-initialize.method = "sheets.initialize"
-initialize.requires = {
-    google: {
-        client: _.is.Object,
-    },
-}
-initialize.accepts = {
-}
-initialize.produces = {
-}
-
-/**
- *  API
- */
-exports.initialize = initialize
+module.exports = Object.assign(
+    {},
+    require("./initialize"),
+    {}
+)
