@@ -1,5 +1,5 @@
 /*
- *  drive/file_get.js
+ *  drive/file_export.js
  *
  *  David Janes
  *  IOTDB.org
@@ -26,8 +26,8 @@ const _ = require("iotdb-helpers")
 
 /**
  */
-const get = _.promise((self, done) => {
-    _.promise.validate(self, get)
+const file_export = _.promise((self, done) => {
+    _.promise.validate(self, file_export)
 
     const fs = require("fs")
     const dest = fs.createWriteStream('/Users/david/xxx.html')
@@ -57,17 +57,17 @@ const get = _.promise((self, done) => {
     })
 })
 
-get.method = "drive.file.get"
-get.requires = {
+file_export.method = "drive.file.file_export"
+file_export.requires = {
     fileId: _.is.String,
     google: {
         drive: _.is.Object,
     },
 }
-get.accepts = {
+file_export.accepts = {
     document_media_type: _.is.String,
 }
-get.produces = {
+file_export.produces = {
 }
 
 /**
@@ -81,12 +81,12 @@ const parameterized = (path, document_media_type) => _.promise((self, done) => {
             console.log("DDD", sd.fileId)
         })
         .add("document_media_type", document_media_type || self.document_media_type || "text/html")
-        .then(get)
+        .then(file_export)
         .end(done, self)
 })
 
 /**
  *  API
  */
-exports.get = get
-exports.get.p = parameterized
+exports.export = file_export
+exports.export.p = parameterized

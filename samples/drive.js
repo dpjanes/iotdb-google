@@ -65,14 +65,14 @@ const googled = {
 }
 
 
-if (action("file.get")) {
+if (action("file.export")) {
     _.promise({
         googled: googled,
     })
         .then(google.initialize)
         .then(google.auth.token)
         .then(google.drive.initialize)
-        .then(google.drive.file.get.p(
+        .then(google.drive.file.export.p(
             "https://docs.google.com/document/d/1vgWWtt4JEyNiGVGTs9tcOfRdZcg9UJGbIDWGNYpR0kc/edit",
             "text/html"
         ))
