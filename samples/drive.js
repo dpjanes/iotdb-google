@@ -77,7 +77,7 @@ if (action("file.export")) {
             "text/html"
         ))
         .make(sd => {
-            console.log("+", JSON.stringify(sd.document, null, 2))
+            console.log("+", sd.document)
         })
         .catch(_error)
 } else if (!action_name) {

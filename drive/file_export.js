@@ -30,11 +30,13 @@ const file_export = _.promise((self, done) => {
     _.promise.validate(self, file_export)
 
     const fs = require("fs")
-    const dest = fs.createWriteStream('/Users/david/xxx.html')
+    const dest = fs.createWriteStream("/Users/david/xxx.html")
+
+    self.document_media_type = self.document_media_type || "text/html"
 
     self.google.drive.files.export({
         fileId: self.fileId,
-        mimeType: self.document_media_type || "text/html",
+        mimeType: self.document_media_type,
     }, {
         responseType: "stream"
     }, (error, response) => {
@@ -42,18 +44,18 @@ const file_export = _.promise((self, done) => {
             return done(error)
         }
 
-        response.data
-            .on('end', function () {
-              console.log('Done');
-              done(null, self)
-            })
-            .on('error', function (err) {
-              console.log('Error during download', err);
-              done(err)
-            })
-            .pipe(dest);
+        const buffers = []
 
-        console.log("B")
+        response.data
+            .on("data", data => {
+                buffers.push(data.toString())
+            })
+            .on("end", () => {
+                self.document = buffers.join("")
+
+                done(null, self)
+            })
+            .on("error", error => done(error))
     })
 })
 
@@ -77,12 +79,9 @@ const parameterized = (path, document_media_type) => _.promise((self, done) => {
 
     _.promise(self) 
         .then(google.drive.parse.p(path || self.path || null))
-        .make(sd => {
-            console.log("DDD", sd.fileId)
-        })
         .add("document_media_type", document_media_type || self.document_media_type || "text/html")
         .then(file_export)
-        .end(done, self)
+        .end(done, self, "document,document_media_type")
 })
 
 /**
