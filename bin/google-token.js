@@ -66,6 +66,7 @@ const ad = minimist(process.argv.slice(2), {
     boolean: [
         "sheets",
         "write",
+        "drive",
     ],
     string: [
         "scope",
@@ -83,6 +84,14 @@ if (ad.sheets) {
         scopes.push("https://www.googleapis.com/auth/spreadsheets")
     } else {
         scopes.push("https://www.googleapis.com/auth/spreadsheets.readonly")
+    }
+}
+
+if (ad.drive) {
+    if (ad.write) {
+        scopes.push("https://www.googleapis.com/auth/drive")
+    } else {
+        scopes.push("https://www.googleapis.com/auth/drive.readonly")
     }
 }
 

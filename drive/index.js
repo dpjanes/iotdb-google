@@ -27,3 +27,9 @@ module.exports = Object.assign(
     require("./initialize"),
     {}
 )
+
+module.exports.file = Object.assign(
+    {},
+    require("./file_get"),
+    {},
+)
