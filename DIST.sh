@@ -38,6 +38,7 @@ echo "=================="
         *.js \
         auth/*.js \
         chat/*.js \
+        drive/*.js \
         sheets/*.js \
         |
     ( cd "${NPM_DST}" && tar xvf - && npm publish ) || exit 1

@@ -37,6 +37,8 @@ To use this you need to also have a token.
 We provide a tool here to this, e.g.
 
     node bin/google-token.js --sheets 
+    node bin/google-token.js --drive
+    node bin/google-token.js --sheets --drive --write
 
 Note the expectation that the credentials are in `credentials.json`
 and the token will be saved in `token.json`. 
@@ -111,6 +113,26 @@ Here's an example of manipulating the spreadsheet
 
         .make(sd => {
             console.log("+", "done")
+        })
+        .catch(error => {
+            delete error.self
+            console.log("#", error)
+        })
+
+Here's an example of exporting a Google Doc to HTML
+
+    _.promise({
+        googled: googled,
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.drive.initialize)
+        .then(google.drive.file.export.p(
+            "https://docs.google.com/document/d/1vgXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/edit",
+            "text/html"
+        ))
+        .make(sd => {
+            console.log("+", sd.document)
         })
         .catch(error => {
             delete error.self
