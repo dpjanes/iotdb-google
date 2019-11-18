@@ -37,7 +37,7 @@ const list_values = _.promise((self, done) => {
         }
         
         self.google$result = result
-        self.jsons = result.data.values
+        self.jsons = result.data.values || []
         
         done(null, self)
     })

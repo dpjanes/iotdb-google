@@ -23,6 +23,7 @@
 "use strict"
 
 const _ = require("iotdb-helpers")
+const errors = require("iotdb-errors")
 
 /**
  */
@@ -30,7 +31,6 @@ const file_export = _.promise((self, done) => {
     _.promise.validate(self, file_export)
 
     const fs = require("fs")
-    const dest = fs.createWriteStream("/Users/david/xxx.html")
 
     self.document_media_type = self.document_media_type || "text/html"
 
@@ -41,6 +41,12 @@ const file_export = _.promise((self, done) => {
         responseType: "stream"
     }, (error, response) => {
         if (error) {
+            if (error.response && error.response.status) {
+                return done(new errors.NotFound(
+                    `${error.response.status}: ${error.response.statusText || "?"} (${self.fileId})`, 
+                    error.response.status))
+            }
+
             return done(error)
         }
 
