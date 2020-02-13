@@ -214,6 +214,25 @@ batch.produces = {
 }
 
 /**
+ */
+const start = _.promise(self => {
+    self.google$batch = true
+    self.requests = []
+})
+
+start.method = "sheets.batch.start"
+start.description = ``
+start.requires = {
+}
+start.accepts = {
+}
+start.produces = {
+    google$batch: _.is.Boolean,
+    requests: _.is.Array,
+}
+
+/**
  *  API
  */
-exports.batch = batch;
+exports.batch = batch
+exports.batch.start = start
