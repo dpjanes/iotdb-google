@@ -37,6 +37,7 @@ module.exports = Object.assign(
     require("./parse_path"),
     require("./parse_range"),
     require("./parse_url"),
+    require("./put"),
     require("./properties"),
     require("./sheets"),
     require("./title"),

@@ -1,11 +1,11 @@
 /*
- *  sheets/properties.js
+ *  sheets/put.js
  *
  *  David Janes
  *  IOTDB.org
- *  2019-07-04
+ *  2020-02-13
  *
- *  Copyright [2013-2019] [David P. Janes]
+ *  Copyright (2013-2020) David P. Janes
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,47 +23,50 @@
 "use strict"
 
 const _ = require("iotdb-helpers")
-const errors = require("iotdb-errors")
 
 /**
- *  https://developers.google.com/sheets/api/samples/sheet#determine_sheet_id_and_other_properties
  */
-const properties = _.promise((self, done) => {
-    const google = require("..")
+const put = _.promise((self, done) => {
+    _.promise.validate(self, put)
 
-    _.promise.validate(self, properties)
-
-    self.google.sheets.spreadsheets.get({
+    const params = {
         spreadsheetId: self.google$range.spreadsheetId,
-    }, (error, result) => {
+        range: self.google$range.range,
+        valueInputOption: "RAW",
+        // insertDataOption: "INSERT_ROWS",
+        resource: {
+            values: self.jsons,
+        },
+    }
+
+    self.google.sheets.spreadsheets.values.update(params, (error, result) => {
         if (error) {
             return done(error)
         }
         
         self.google$result = result
-        self.properties = result.data.properties
+        self.jsons = result.data.values
         
         done(null, self)
     })
 })
 
-properties.method = "properties.list";
-properties.requires = {
+put.method = "sheets.put";
+put.requires = {
+    jsons: _.is.Array.of.JSON,
     google$range: {
         spreadsheetId: _.is.String,
+        range: _.is.String,
     },
     google: {
         sheets: _.is.Object,
     },
 }
-properties.accepts = {
-}
-properties.produces = {
+put.produces = {
     google$result: _.is.Dictionary,
-    properties: _.is.Dictionary,
 }
 
 /**
  *  API
  */
-exports.properties = properties;
+exports.put = put

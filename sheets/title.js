@@ -44,7 +44,7 @@ const title_set = _.promise((self, done) => {
 title_set.method = "sheets.title.set"
 title_set.requires = {
     title: _.is.String,
-    query: {
+    google$range: {
         spreadsheetId: _.is.String,
     },
     google: {
@@ -83,7 +83,7 @@ const title_get = _.promise((self, done) => {
 
 title_get.method = "sheets.title.get"
 title_get.requires = {
-    query: {
+    google$range: {
         spreadsheetId: _.is.String,
     },
     google: {

@@ -50,7 +50,7 @@ const sheets = _.promise((self, done) => {
 
 sheets.method = "sheets"
 sheets.requires = {
-    query: {
+    google$range: {
         spreadsheetId: _.is.String,
     },
     google: {
@@ -107,7 +107,7 @@ const query = _.promise(self => {
 
 query.method = "sheets.query"
 query.requires = {
-    query: _.is.Dictionary,
+    google$range: _.is.Dictionary,
 }
 query.accepts = {
     sheet: _.is.Dictionary,

@@ -55,18 +55,12 @@ parse_url.produces = {
         spreadsheetId: _.is.String,
     },
 }
-
-/**
- */
-const parameterized = url => _.promise((self, done) => {
-    _.promise(self)
-        .add("url", url)
-        .then(parse_url)
-        .end(done, self, "google$range")
-})
+parse_url.params = {
+    url: _.p.normal,
+}
+parse_url.p = _.p(parse_url)
 
 /**
  *  API
  */
-exports.parse_url = parse_url;
-exports.parse_url.p = parameterized
+exports.parse_url = parse_url
