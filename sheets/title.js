@@ -5,7 +5,7 @@
  *  IOTDB.org
  *  2019-07-05
  *
- *  Copyright [2013-2019] [David P. Janes]
+ *  Copyright (2013-2020) David P. Janes
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ const title_set = _.promise((self, done) => {
             fields: "title",
         }))
         .conditional(!self.google$batch, google.sheets.batch)
-        .end(done, self, "google$result,requests")
+        .end(done, self, "google$result,google$requests")
 })
 
 title_set.method = "sheets.title.set"

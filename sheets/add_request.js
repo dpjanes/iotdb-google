@@ -5,7 +5,7 @@
  *  IOTDB.org
  *  2019-07-06
  *
- *  Copyright [2013-2019] [David P. Janes]
+ *  Copyright (2013-2020) David P. Janes
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,17 +29,17 @@ const assert = require("assert")
 /**
  */
 const parameterized = (key, request) => _.promise(self => {
-    self.requests = self.requests || []
+    self.google$requests = self.google$requests || []
 
     if (_.is.Dictionary(key)) {
         assert.ok(_.is.JSON(key))
 
-        self.requests.push(key)
+        self.google$requests.push(key)
     } else {
         assert.ok(_.is.String(key))
         assert.ok(_.is.JSON(request))
 
-        self.requests.push({
+        self.google$requests.push({
             [ key ]: request,
         })
     }

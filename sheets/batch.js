@@ -5,7 +5,7 @@
  *  IOTDB.org
  *  2019-07-03
  *
- *  Copyright [2013-2019] [David P. Janes]
+ *  Copyright (2013-2020) David P. Janes
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,11 +31,11 @@ const logger = require("../logger")(__filename)
 /**
  */
 const _merge_similar = _.promise(self => {
-    self.requests = [ ... self.requests ]
+    self.google$requests = [ ... self.google$requests ]
 
     const seend = {}
 
-    self.requests.forEach(request => {
+    self.google$requests.forEach(request => {
         _.mapObject(request, (valued, key) => {
             if (!_.is.Dictionary(valued)) {
                 return
@@ -71,7 +71,7 @@ const _merge_similar = _.promise(self => {
         })
     })
 
-    self.requests.forEach(request => {
+    self.google$requests.forEach(request => {
         _.mapObject(request, (valued, key) => {
             if (!_.is.Dictionary(valued)) {
                 return
@@ -82,7 +82,7 @@ const _merge_similar = _.promise(self => {
         })
     })
 
-    self.requests = self.requests.filter(r => !_.is.Empty(r))
+    self.google$requests = self.google$requests.filter(r => !_.is.Empty(r))
 })
 
 /**
@@ -92,7 +92,7 @@ const _resolve_ranges = _.promise((self, done) => {
 
     const ranged = {}
     
-    self.requests.forEach(request => {
+    self.google$requests.forEach(request => {
         _.mapObject(request, (valued, key) => {
             if (!_.is.Dictionary(valued)) {
                 return
@@ -120,7 +120,7 @@ const _resolve_ranges = _.promise((self, done) => {
                     ranged[range] = _util.parse_range(range, sd.sheets)
                 })
 
-            self.requests.forEach(request => {
+            self.google$requests.forEach(request => {
                 _.mapObject(request, (valued, key) => {
 
                     if (_.is.Undefined(valued._range)) {
@@ -156,13 +156,13 @@ _resolve_ranges.produces = {
  */
 const _update = _.promise((self, done) => {
     if (self.verbose) {
-        console.log("-", batch.method, "request", JSON.stringify(self.requests, null, 2))
+        console.log("-", batch.method, "request", JSON.stringify(self.google$requests, null, 2))
     }
 
     self.google.sheets.spreadsheets.batchUpdate({
         spreadsheetId: self.google$range.spreadsheetId,
         resource: {
-            requests: self.requests,
+            requests: self.google$requests,
         },
     }, (error, result) => {
         if (error) {
@@ -193,14 +193,14 @@ const batch = _.promise((self, done) => {
         .then(_resolve_ranges)
         .then(_update)
         .make(sd => {
-            sd.requests = []
+            sd.google$requests = []
         })
-        .end(done, self, "google$result,requests")
+        .end(done, self, "google$result,google$requests")
 })
 
 batch.method = "sheets.batch";
 batch.requires = {
-    requests: _.is.Array.of.JSON,
+    google$requests: _.is.Array.of.JSON,
     google$range: {
         spreadsheetId: _.is.String,
     },
@@ -210,14 +210,14 @@ batch.requires = {
 }
 batch.produces = {
     google$result: _.is.Dictionary,
-    requests: _.is.Array,
+    google$requests: _.is.Array,
 }
 
 /**
  */
 const start = _.promise(self => {
     self.google$batch = true
-    self.requests = []
+    self.google$requests = []
 })
 
 start.method = "sheets.batch.start"
@@ -228,7 +228,7 @@ start.accepts = {
 }
 start.produces = {
     google$batch: _.is.Boolean,
-    requests: _.is.Array,
+    google$requests: _.is.Array,
 }
 
 /**

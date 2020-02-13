@@ -5,7 +5,7 @@
  *  IOTDB.org
  *  2019-07-06
  *
- *  Copyright [2013-2019] [David P. Janes]
+ *  Copyright (2013-2020) David P. Janes
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ const cell_background = _.promise((self, done) => {
             _range: self.google$range.range || null,
         }))
         .conditional(!self.google$batch, google.sheets.batch)
-        .end(done, self, "google$result,requests")
+        .end(done, self, "google$result,google$requests")
 })
 
 cell_background.method = "sheets.cell.background"
@@ -90,7 +90,7 @@ const cell_background_p = _color => _.promise((self, done) => {
     _.promise(self) 
         .add("color", _color)
         .then(cell_background)
-        .end(done, self, "google$result,requests")
+        .end(done, self, "google$result,google$requests")
 })
 
 /**
@@ -119,7 +119,7 @@ const cell_color = _.promise((self, done) => {
             _range: self.google$range.range || null,
         }))
         .conditional(!self.google$batch, google.sheets.batch)
-        .end(done, self, "google$result,requests")
+        .end(done, self, "google$result,google$requests")
 })
 
 cell_color.method = "sheets.cell.color"
@@ -146,7 +146,7 @@ const cell_color_p = _color => _.promise((self, done) => {
     _.promise(self) 
         .add("color", _color)
         .then(cell_color)
-        .end(done, self, "google$result,requests")
+        .end(done, self, "google$result,google$requests")
 })
 
 /**
@@ -169,7 +169,7 @@ const cell_size = _.promise((self, done) => {
             _range: self.google$range.range || null,
         }))
         .conditional(!self.google$batch, google.sheets.batch)
-        .end(done, self, "google$result,requests")
+        .end(done, self, "google$result,google$requests")
 })
 
 cell_size.method = "sheets.cell.size"
@@ -196,7 +196,7 @@ const cell_size_p = _size => _.promise((self, done) => {
     _.promise(self) 
         .add("size", _size)
         .then(cell_size)
-        .end(done, self, "google$result,requests")
+        .end(done, self, "google$result,google$requests")
 })
 
 /**
@@ -220,7 +220,7 @@ const _cell_style = style => _.promise((self, done) => {
             _range: self.google$range.range || null,
         }))
         .conditional(!self.google$batch, google.sheets.batch)
-        .end(done, self, "google$result,requests")
+        .end(done, self, "google$result,google$requests")
 })
 
 /**
@@ -229,7 +229,7 @@ const _cell_style_p = style => _style => _.promise((self, done) => {
     _.promise(self) 
         .add(style, _style)
         .then(_cell_style(style))
-        .end(done, self, "google$result,requests")
+        .end(done, self, "google$result,google$requests")
 })
 
 
