@@ -39,7 +39,7 @@ const parse = _.promise((self, done) => {
         .conditional(_.is.AbsoluteURL(self.path), google.sheets.parse_url)
         .conditional(self.path.startsWith("/"), google.sheets.parse_path)
         .conditional(self.path.indexOf("/") === -1, google.sheets.parse_range)
-        .end(done, self, "query")
+        .end(done, self, "google$range")
 })
 
 parse.method = "sheets.parse"
@@ -47,7 +47,7 @@ parse.requires = {
     path: _.is.String,
 }
 parse.produces = {
-    query: {
+    google$range: {
         spreadsheetId: _.is.String,
         range: _.is.String,
     },
@@ -59,7 +59,7 @@ const parameterized = path => _.promise((self, done) => {
     _.promise(self)
         .add("path", path)
         .then(parse)
-        .end(done, self, "query")
+        .end(done, self, "google$range")
 })
 
 /**

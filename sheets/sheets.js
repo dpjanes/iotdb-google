@@ -33,7 +33,7 @@ const sheets = _.promise((self, done) => {
     _.promise.validate(self, sheets)
 
     self.google.sheets.spreadsheets.get({
-        spreadsheetId: self.query.spreadsheetId,
+        spreadsheetId: self.google$range.spreadsheetId,
     }, (error, result) => {
         if (error) {
             return done(error)
@@ -101,8 +101,8 @@ const query = _.promise(self => {
         throw new errors.NotFound("no sheet was selected")
     }
 
-    self.query = _.d.clone(self.query)
-    self.query.range = self.sheet.title
+    self.google$range = _.d.clone(self.google$range)
+    self.google$range.range = self.sheet.title
 })
 
 query.method = "sheets.query"

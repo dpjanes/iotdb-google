@@ -32,25 +32,25 @@ const parse_path = _.promise(self => {
 
     const parts = self.path.split("/").filter(p => p.length)
 
-    self.query = {}
+    self.google$range = {}
 
     switch (parts.length) {
     case 0:
         return done(new errors.Invalid("expected at least one path components"))
 
     case 1:
-        self.query.spreadsheetId = parts[0]
-        self.query.range = null
+        self.google$range.spreadsheetId = parts[0]
+        self.google$range.range = null
         break
 
     case 2:
-        self.query.spreadsheetId = parts[0]
-        self.query.range = parts[1]
+        self.google$range.spreadsheetId = parts[0]
+        self.google$range.range = parts[1]
         break
 
     case 3:
-        self.query.spreadsheetId = parts[0]
-        self.query.range = `${parts[1]}!${parts[2]}`
+        self.google$range.spreadsheetId = parts[0]
+        self.google$range.range = `${parts[1]}!${parts[2]}`
         break
 
     default:
@@ -63,7 +63,7 @@ parse_path.requires = {
     path: _.is.String,
 }
 parse_path.produces = {
-    query: {
+    google$range: {
         spreadsheetId: _.is.String,
         range: _.is.String, 
     },
@@ -76,7 +76,7 @@ const parameterized = path => _.promise((self, done) => {
     _.promise(self)
         .add("path", path)
         .then(parse_path)
-        .end(done, self, "query")
+        .end(done, self, "google$range")
 })
 
 /**

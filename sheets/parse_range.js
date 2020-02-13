@@ -30,9 +30,9 @@ const errors = require("iotdb-errors")
 const parse_range = _.promise(self => {
     _.promise.validate(self, parse_range)
 
-    self.query = Object.assign(
+    self.google$range = Object.assign(
         {},
-        self.query,
+        self.google$range,
         { range: self.range }
     )
 })
@@ -42,7 +42,7 @@ parse_range.requires = {
     range: _.is.String,
 }
 parse_range.produces = {
-    query: {
+    google$range: {
         range: _.is.String, 
     },
 }
@@ -53,7 +53,7 @@ const parameterized = range => _.promise((self, done) => {
     _.promise(self)
         .add("range", range)
         .then(parse_range)
-        .end(done, self, "query")
+        .end(done, self, "google$range")
 })
 
 /**

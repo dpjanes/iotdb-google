@@ -36,13 +36,13 @@ const list = _.promise((self, done) => {
         .validate(list)
 
         .add("jsons", null)
-        .conditional(self.query.spreadsheetId && self.query.range, google.sheets.list_values)
+        .conditional(self.google$range.spreadsheetId && self.google$range.range, google.sheets.list_values)
         .make(sd => {
             if (sd.jsons) {
                 return
             }
 
-            throw new errors.Invalid("can't find a listing function for the query")
+            throw new errors.Invalid("can't find a listing function for the google$range")
         })
 
         .end(done, self, "jsons")
@@ -50,7 +50,7 @@ const list = _.promise((self, done) => {
 
 list.method = "sheets.list";
 list.requires = {
-    query: {
+    google$range: {
         spreadsheetId: _.is.String,
     },
     google: {
@@ -58,7 +58,7 @@ list.requires = {
     },
 }
 list.accepts = {
-    query: {
+    google$range: {
         range: _.is.String,
     },
 }
@@ -70,11 +70,11 @@ list.produces = {
 
 /**
  */
-const parameterized = query => _.promise((self, done) => {
+const parameterized = google$range => _.promise((self, done) => {
     const google = require("..")
 
     _.promise(self)
-        .conditional(_.is.String(query), google.sheets.parse.p(query), _.promise.add("query", query))
+        .conditional(_.is.String(google$range), google.sheets.parse.p(google$range), _.promise.add("google$range", google$range))
         .then(list)
         .end(done, self, "jsons,google$result")
 })

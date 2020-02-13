@@ -38,7 +38,7 @@ const find_replace = _.promise((self, done) => {
             replacement: self.replace,
         },
         {
-            _range: self.query.range || null,
+            _range: self.google$range.range || null,
         },
         self.google$options || {},
     )
@@ -57,7 +57,7 @@ const find_replace = _.promise((self, done) => {
 
 find_replace.method = "sheets.batch";
 find_replace.requires = {
-    query: _.is.Dictionary,
+    google$range: _.is.Dictionary,
     google: {
         sheets: _.is.Object,
     },

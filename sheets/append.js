@@ -30,8 +30,8 @@ const append = _.promise((self, done) => {
     _.promise.validate(self, append)
 
     const params = {
-        spreadsheetId: self.query.spreadsheetId,
-        range: self.query.range,
+        spreadsheetId: self.google$range.spreadsheetId,
+        range: self.google$range.range,
         valueInputOption: "RAW",
         insertDataOption: "INSERT_ROWS",
         resource: {
@@ -54,7 +54,7 @@ const append = _.promise((self, done) => {
 append.method = "sheets.append";
 append.requires = {
     jsons: _.is.Array.of.JSON,
-    query: {
+    google$range: {
         spreadsheetId: _.is.String,
         range: _.is.String,
     },

@@ -32,7 +32,7 @@ const URL = require("url").URL
 const parse_url = _.promise(self => {
     _.promise.validate(self, parse_url)
 
-    self.query = {
+    self.google$range = {
         spreadsheetId: null,
         range: null,
     }
@@ -43,7 +43,7 @@ const parse_url = _.promise(self => {
         return done(new errors.Invalid("did not understand URL"))
     }
 
-    self.query.spreadsheetId = match[1]
+    self.google$range.spreadsheetId = match[1]
 })
 
 parse_url.method = "sheets.parse_url"
@@ -51,7 +51,7 @@ parse_url.requires = {
     url: _.is.String,
 }
 parse_url.produces = {
-    query: {
+    google$range: {
         spreadsheetId: _.is.String,
     },
 }
@@ -62,7 +62,7 @@ const parameterized = url => _.promise((self, done) => {
     _.promise(self)
         .add("url", url)
         .then(parse_url)
-        .end(done, self, "query")
+        .end(done, self, "google$range")
 })
 
 /**

@@ -31,7 +31,7 @@ const _ = require("iotdb-helpers")
 const list_values = _.promise((self, done) => {
     _.promise.validate(self, list_values)
 
-    self.google.sheets.spreadsheets.values.get(self.query, (error, result) => {
+    self.google.sheets.spreadsheets.values.get(self.google$range, (error, result) => {
         if (error) {
             return done(error)
         }
@@ -45,7 +45,7 @@ const list_values = _.promise((self, done) => {
 
 list_values.method = "sheets.list_values";
 list_values.requires = {
-    query: {
+    google$range: {
         spreadsheetId: _.is.String,
         range: _.is.String,
     },
@@ -61,11 +61,11 @@ list_values.produces = {
 
 /**
  */
-const parameterized = query => _.promise((self, done) => {
+const parameterized = google$range => _.promise((self, done) => {
     const google = require("..")
 
     _.promise(self)
-        .conditional(_.is.String(query), google.sheets.parse_path.p(query), _.promise.add("query", query))
+        .conditional(_.is.String(google$range), google.sheets.parse_path.p(google$range), _.promise.add("google$range", google$range))
         .then(list_values)
         .end(done, self, "jsons,google$result")
 })

@@ -34,7 +34,7 @@ const properties = _.promise((self, done) => {
     _.promise.validate(self, properties)
 
     self.google.sheets.spreadsheets.get({
-        spreadsheetId: self.query.spreadsheetId,
+        spreadsheetId: self.google$range.spreadsheetId,
     }, (error, result) => {
         if (error) {
             return done(error)

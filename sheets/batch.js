@@ -160,7 +160,7 @@ const _update = _.promise((self, done) => {
     }
 
     self.google.sheets.spreadsheets.batchUpdate({
-        spreadsheetId: self.query.spreadsheetId,
+        spreadsheetId: self.google$range.spreadsheetId,
         resource: {
             requests: self.requests,
         },
@@ -201,7 +201,7 @@ const batch = _.promise((self, done) => {
 batch.method = "sheets.batch";
 batch.requires = {
     requests: _.is.Array.of.JSON,
-    query: {
+    google$range: {
         spreadsheetId: _.is.String,
     },
     google: {
