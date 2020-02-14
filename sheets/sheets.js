@@ -44,11 +44,11 @@ const sheets = _.promise((self, done) => {
             .map(s => s.properties)
             .filter(s => s)
         
-        done(null, self)
+        done(null, self, sheets)
     })
 })
 
-sheets.method = "sheets"
+sheets.method = "sheets.sheets"
 sheets.requires = {
     google$range: {
         spreadsheetId: _.is.String,
@@ -61,6 +61,7 @@ sheets.accepts = {
 }
 sheets.produces = {
     sheets: _.is.Array,
+    google$result: _.is.Object,
 }
 
 /**
@@ -71,7 +72,7 @@ const select = _.promise(self => {
     self.sheet = self.sheets.find(sheet => sheet.title === self.title) || null
 })
 
-select.method = "sheets.select"
+select.method = "sheets.sheets.select"
 select.description = `Select a sheet by title`
 select.requires = {
     sheets: _.is.Array.of.Dictionary,
@@ -82,15 +83,10 @@ select.accepts = {
 select.produces = {
     sheet: _.is.Dictionary,
 }
-
-/**
- */
-const select_p = title => _.promise((self, done) => {
-    _.promise(self) 
-        .add("title", title)
-        .then(select)
-        .end(done, self)
-})
+select.params = {
+    title: _.p.normal,
+}
+select.p = _.p(select)
 
 /**
  */
@@ -105,7 +101,8 @@ const query = _.promise(self => {
     self.google$range.range = self.sheet.title
 })
 
-query.method = "sheets.query"
+query.method = "sheets.sheets.query"
+query.description = "Select the current sheet"
 query.requires = {
     google$range: _.is.Dictionary,
 }
@@ -116,9 +113,47 @@ query.produces = {
 }
 
 /**
+ */
+const add = _.promise((self, done) => {
+    const google = require("..")
+
+    _.promise(self)
+        .validate(add)
+        .then(google.sheets.add_request.p("addSheet", {
+            properties: {
+                title: self.title,
+            },
+        }))
+        .conditional(!self.google$batch, google.sheets.batch)
+        .end(done, self, add)
+})
+
+add.method = "sheets.sheets.add"
+add.description = `Add a new Sheet`
+add.requires = {
+    google: {
+        sheets: _.is.Object,
+    },
+    title: _.is.String,
+}
+add.accepts = {
+    google$batch: _.is.Boolean,
+    google$requests: _.is.Array,
+}
+add.produces = {
+    google$result: _.is.Object,
+    google$requests: _.is.Array,
+}
+add.params = {
+    title: _.p.normal,
+}
+add.p = _.p(add)
+
+
+/**
  *  API
  */
 exports.sheets = sheets
 exports.sheets.select = select
-exports.sheets.select.p = select_p
 exports.sheets.query = query
+exports.sheets.add = add

@@ -243,6 +243,19 @@ if (action("list-values-query")) {
             console.log("+", "done")
         })
         .catch(_error)
+} else if (action("sheets.add")) {
+    _.promise({
+        googled: googled,
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.sheets.initialize)
+        .then(google.sheets.parse_path.p("/10Wdg2EE6TGEnOBJonFuQ5C9Kp0cZy1Lp0zA4JsSIniE/"))
+        .then(google.sheets.sheets.add.p("My New Sheet"))
+        .make(sd => {
+            console.log("+", "done", sd.google$result)
+        })
+        .catch(_error)
 } else if (action("batch")) {
     _.promise({
         googled: googled,

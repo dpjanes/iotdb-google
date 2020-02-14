@@ -145,6 +145,58 @@ cell_color.p = _.p(cell_color)
 
 /**
  */
+const cell_font = _.promise((self, done) => {
+    const google = require("..")
+
+    _.promise.validate(self, cell_font)
+
+    _.promise(self)
+        .then(google.sheets.add_request.p("repeatCell", {
+            cell: {
+                userEnteredFormat: {
+                    textFormat: {
+                        fontFamily: self.font,
+                    },
+                },
+            },
+            fields: "userEnteredFormat(textFormat)",
+            _range: self.google$range.range || null,
+        }))
+        /*
+        .make(sd => {
+            console.log("REQUESTS", JSON.stringify(sd.google$requests, null, 2))
+        })
+        */
+        .conditional(!self.google$batch, google.sheets.batch)
+        .end(done, self, cell_font)
+})
+
+cell_font.method = "sheets.cell.font"
+cell_font.description = "Set cell text font"
+cell_font.requires = {
+    font: _.is.String, 
+    google$range: {
+        spreadsheetId: _.is.String,
+    },
+    google: {
+        sheets: _.is.Object,
+    },
+}
+cell_font.accepts = {
+    google$batch: _.is.Boolean,
+    google$requests: _.is.Array,
+}
+cell_font.produces = {
+    google$result: _.is.Dictionary,
+    google$requests: _.is.Array,
+}
+cell_font.params = {
+    font: _.p.normal,
+}
+cell_font.p = _.p(cell_font)
+
+/**
+ */
 const cell_size = _.promise((self, done) => {
     const google = require("..")
 
@@ -155,7 +207,7 @@ const cell_size = _.promise((self, done) => {
             cell: {
                 userEnteredFormat: {
                     textFormat: {
-                        fontSize: self.size ? true : false,
+                        fontSize: self.size,
                     },
                 },
             },
@@ -249,6 +301,7 @@ const _cell_style = _style => {
 exports.cell = {}
 exports.cell.background = cell_background
 exports.cell.color = cell_color
+exports.cell.font = cell_font
 exports.cell.size = cell_size
 
 exports.cell.bold = _cell_style("bold")
