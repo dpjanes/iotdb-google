@@ -63,7 +63,7 @@ const cell_background = _.promise((self, done) => {
             _range: self.google$range.range || null,
         }))
         .conditional(!self.google$batch, google.sheets.batch)
-        .end(done, self, "google$result,google$requests")
+        .end(done, self, cell_background)
 })
 
 cell_background.method = "sheets.cell.background"
@@ -79,19 +79,16 @@ cell_background.requires = {
 }
 cell_background.accepts = {
     google$batch: _.is.Boolean,
+    google$requests: _.is.Array,
 }
 cell_background.produces = {
     google$result: _.is.Dictionary,
+    google$requests: _.is.Array,
 }
-
-/**
- */
-const cell_background_p = _color => _.promise((self, done) => {
-    _.promise(self) 
-        .add("color", _color)
-        .then(cell_background)
-        .end(done, self, "google$result,google$requests")
-})
+cell_background.params = {
+    color: _.p.normal,
+}
+cell_background.p = _.p(cell_background)
 
 /**
  */
@@ -119,7 +116,7 @@ const cell_color = _.promise((self, done) => {
             _range: self.google$range.range || null,
         }))
         .conditional(!self.google$batch, google.sheets.batch)
-        .end(done, self, "google$result,google$requests")
+        .end(done, self, cell_color)
 })
 
 cell_color.method = "sheets.cell.color"
@@ -135,19 +132,16 @@ cell_color.requires = {
 }
 cell_color.accepts = {
     google$batch: _.is.Boolean,
+    google$requests: _.is.Array,
 }
 cell_color.produces = {
     google$result: _.is.Dictionary,
+    google$requests: _.is.Array,
 }
-
-/**
- */
-const cell_color_p = _color => _.promise((self, done) => {
-    _.promise(self) 
-        .add("color", _color)
-        .then(cell_color)
-        .end(done, self, "google$result,google$requests")
-})
+cell_color.params = {
+    color: _.p.normal,
+}
+cell_color.p = _.p(cell_color)
 
 /**
  */
@@ -169,7 +163,7 @@ const cell_size = _.promise((self, done) => {
             _range: self.google$range.range || null,
         }))
         .conditional(!self.google$batch, google.sheets.batch)
-        .end(done, self, "google$result,google$requests")
+        .end(done, self, cell_size)
 })
 
 cell_size.method = "sheets.cell.size"
@@ -185,71 +179,79 @@ cell_size.requires = {
 }
 cell_size.accepts = {
     google$batch: _.is.Boolean,
+    google$requests: _.is.Array,
 }
 cell_size.produces = {
     google$result: _.is.Dictionary,
+    google$requests: _.is.Array,
 }
-
-/**
- */
-const cell_size_p = _size => _.promise((self, done) => {
-    _.promise(self) 
-        .add("size", _size)
-        .then(cell_size)
-        .end(done, self, "google$result,google$requests")
-})
+cell_size.params = {
+    size: _.p.normal,
+}
+cell_size.p = _.p(cell_size)
 
 /**
  *  i.e. bold, italic, strikethrough, underline
  */
-const _cell_style = style => _.promise((self, done) => {
-    const google = require("..")
+const _cell_style = _style => {
+    const f = _.promise((self, done) => {
+        const google = require("..")
 
-    _.promise.validate(self, _cell_style)
+        _.promise.validate(self, _cell_style)
 
-    _.promise(self)
-        .then(google.sheets.add_request.p("repeatCell", {
-            cell: {
-                userEnteredFormat: {
-                    textFormat: {
-                        [ style ]: self[style] ? true : false,
+        _.promise(self)
+            .then(google.sheets.add_request.p("repeatCell", {
+                cell: {
+                    userEnteredFormat: {
+                        textFormat: {
+                            [ _style ]: self[_style] ? true : false,
+                        },
                     },
                 },
-            },
-            fields: "userEnteredFormat(textFormat)",
-            _range: self.google$range.range || null,
-        }))
-        .conditional(!self.google$batch, google.sheets.batch)
-        .end(done, self, "google$result,google$requests")
-})
+                fields: "userEnteredFormat(textFormat)",
+                _range: self.google$range.range || null,
+            }))
+            .conditional(!self.google$batch, google.sheets.batch)
 
-/**
- */
-const _cell_style_p = style => _style => _.promise((self, done) => {
-    _.promise(self) 
-        .add(style, _style)
-        .then(_cell_style(style))
-        .end(done, self, "google$result,google$requests")
-})
+            .end(done, self, _cell_style)
+    })
 
+    f.method = `sheets.cell.${_style}`
+    f.description = `Set cell ${_style}`
+    f.requires = {
+        [ _style ]: _.is.Boolean,
+        google$range: {
+            spreadsheetId: _.is.String,
+        },
+        google: {
+            sheets: _.is.Object,
+        },
+    }
+    f.accepts = {
+        google$batch: _.is.Boolean,
+        google$requests: _.is.Array,
+    }
+    f.produces = {
+        google$result: _.is.Dictionary,
+        google$requests: _.is.Array,
+    }
+    f.params = {
+        [ _style ]: _.p.normal,
+    }
+    f.p = _.p(f)
 
+    return f
+}
 
 /**
  *  API
  */
 exports.cell = {}
 exports.cell.background = cell_background
-exports.cell.background.p = cell_background_p
 exports.cell.color = cell_color
-exports.cell.color.p = cell_color_p
 exports.cell.size = cell_size
-exports.cell.size.p = cell_size_p
 
 exports.cell.bold = _cell_style("bold")
-exports.cell.bold.p = _cell_style_p("bold")
 exports.cell.italic = _cell_style("italic")
-exports.cell.italic.p = _cell_style_p("italic")
 exports.cell.strikethrough = _cell_style("strikethrough")
-exports.cell.strikethrough.p = _cell_style_p("strikethrough")
 exports.cell.underline = _cell_style("underline")
-exports.cell.underline.p = _cell_style_p("underline")
