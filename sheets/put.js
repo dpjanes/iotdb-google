@@ -23,6 +23,7 @@
 "use strict"
 
 const _ = require("iotdb-helpers")
+const _util = require("./_util")
 
 /**
  */
@@ -32,12 +33,14 @@ const put = _.promise((self, done) => {
     const params = {
         spreadsheetId: self.google$range.spreadsheetId,
         range: self.google$range.range,
-        valueInputOption: "RAW",
-        // insertDataOption: "INSERT_ROWS",
+        // valueInputOption: "RAW",
+        valueInputOption: "USER_ENTERED",
         resource: {
-            values: self.jsons,
+            values: self.jsons.map(json => _util.values(json)),
         },
     }
+
+    console.log("HERE:PUT", params.resource.values)
 
     self.google.sheets.spreadsheets.values.update(params, (error, result) => {
         if (error) {

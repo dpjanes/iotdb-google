@@ -126,4 +126,41 @@ console.log(letter_to_column("AZ"))
 console.log(letter_to_column("BA"))
 */
 
+const _quote = t => JSON.stringify(`${t}`)
+
+/**
+ */
+const values = _vs => _vs.map(v => {
+    if (_.is.Timestamp(v)) {
+        return v.replace(/T/, " ").replace(/[.].*$/, "")
+    } else if (_.is.String(v)) {
+        return "'" + v
+    } else if (_.is.Number(v)) {
+        return v
+    } else if (_.is.Dictionary(v)) {
+        if (v.formula) {
+            return v.formula
+        }
+
+        if (_.is.Nullish(v.value)) {
+            return null
+        }
+
+        if (v.link) {
+            return `=HYPERLINK(${_quote(v.link)},${_quote(v.value)})`
+        }
+
+        if (_.is.Timestamp(v)) {
+            return v.replace(/T/, " ").replace(/[.].*$/, "")
+        } else if (_.is.String(v)) {
+            return "'" + v
+        } else if (_.is.Number(v)) {
+            return v
+        }
+    }
+
+    return null
+})
+
 exports.parse_range = parse_range
+exports.values = values
