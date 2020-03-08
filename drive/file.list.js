@@ -63,7 +63,7 @@ const file_list = _.promise((self, done) => {
     })
 })
 
-file_list.method = "drive.file.file_list"
+file_list.method = "drive.file.list"
 file_list.requires = {
     google: {
         drive: _.is.Object,

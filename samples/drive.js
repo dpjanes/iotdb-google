@@ -82,10 +82,26 @@ if (action("file.export")) {
             console.log("+", sd.document)
         })
         .catch(_error)
+} else if (action("file.get")) {
+    _.promise({
+        googled: googled,
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.drive.initialize)
+        .then(google.drive.file.get.p(
+            "1NPIuMTkz0nhx35jRyjvBGcGaycLuPANF",
+        ))
+        .make(sd => {
+            console.log("+", sd.document_name, sd.document_media_type, sd.document_length)
+            console.log("+", sd.document)
+        })
+        .catch(_error)
 } else if (action("file.list")) {
     _.promise({
         googled: googled,
-        path: "0ADQT7EhQqeq7Uk9PVA",
+        // path: "0ADQT7EhQqeq7Uk9PVA",
+        path: "0ABWKoEjGzmq2Uk9PVA",
     })
         .then(google.initialize)
         .then(google.auth.token)

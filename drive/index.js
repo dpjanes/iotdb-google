@@ -33,6 +33,7 @@ module.exports = Object.assign(
 module.exports.file = Object.assign(
     {},
     require("./file.export"),
+    require("./file.get"),
     require("./file.list"),
     {},
 )

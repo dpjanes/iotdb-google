@@ -3,7 +3,7 @@
  *
  *  David Janes
  *  IOTDB.org
- *  2019-09-25
+ *  2020-03-08
  *
  *  Copyright (2013-2020) David P. Janes
  *
@@ -29,16 +29,14 @@ const _util = require("./_util")
 
 /**
  */
-const file_export = _.promise((self, done) => {
-    _.promise.validate(self, file_export)
+const file_get = _.promise((self, done) => {
+    _.promise.validate(self, file_get)
 
-    self.document_media_type = self.document_media_type || "text/html"
-
-    self.google.drive.files.export({
+    self.google.drive.files.get({
         fileId: _util.normalize_path(self.path),
-        mimeType: self.document_media_type,
-    }, {
-    }, (error, response) => {
+        fields: "mimeType,name,size",
+        supportsAllDrives: true,
+    }, {}, (error, response) => {
         if (error) {
             if (error.response && error.response.status) {
                 const message = _.d.first(error, "/response/data/error/message", "?")
@@ -50,32 +48,54 @@ const file_export = _.promise((self, done) => {
             return done(error)
         }
 
-        self.document = response.data
+        self.document_name = response.data.name
+        self.document_length = _.coerce.to.Integer(response.data.size, null)
+        self.document_media_type = response.data.mimeType
 
-        done(null, self)
+        self.google.drive.files.get({
+            fileId: _util.normalize_path(self.path),
+            supportsAllDrives: true,
+            alt: "media",
+        }, {}, (error, response) => {
+            if (error) {
+                if (error.response && error.response.status) {
+                    const message = _.d.first(error, "/response/data/error/message", "?")
+                    return done(new errors.NotFound(
+                        `${error.response.status}: ${message} (${self.fileId})`, 
+                        error.response.status))
+                }
+
+                return done(error)
+            }
+
+            self.document = Buffer.from(response.data)
+
+            done(null, self)
+        })
     })
 })
 
-file_export.method = "drive.file.export"
-file_export.requires = {
+file_get.method = "drive.file.get"
+file_get.requires = {
     path: _util.is_path,
     google: {
         drive: _.is.Object,
     },
 }
-file_export.accepts = {
-    document_media_type: _.is.String,
+file_get.accepts = {
 }
-file_export.produces = {
-    document: [ _.is.String, _.is.Buffer, ],
+file_get.produces = {
+    document: _.is.Buffer,
     document_media_type: _.is.String,
+    document_name: _.is.String,
+    document_length: _.is.Integer,
 }
-file_export.params = {
+file_get.params = {
     path: _.p.normal,
 }
-file_export.p = _.p(file_export)
+file_get.p = _.p(file_get)
 
 /**
  *  API
  */
-exports.export = file_export
+exports.get = file_get
