@@ -76,6 +76,10 @@ const file_get = _.promise((self, done) => {
 })
 
 file_get.method = "drive.file.get"
+file_get.description = `
+    Use drive.file.metadata to get what Google's
+    file.get does. We've made the naming more 
+    consistent with IOTDB`
 file_get.requires = {
     path: _util.is_path,
     google: {
