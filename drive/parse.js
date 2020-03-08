@@ -23,7 +23,6 @@
 "use strict"
 
 const _ = require("iotdb-helpers")
-const errors = require("iotdb-errors")
 
 /**
  */
@@ -32,11 +31,8 @@ const parse = _.promise((self, done) => {
 
     _.promise(self)
         .validate(parse)
-
-        .add("fileId", self.path)
         .conditional(_.is.AbsoluteURL(self.path), google.drive.parse_url.p(self.path))
-
-        .end(done, self, "fileId")
+        .end(done, self, parse)
 })
 
 parse.method = "drive.parse"
@@ -44,20 +40,14 @@ parse.requires = {
     path: _.is.String,
 }
 parse.produces = {
-    fileId: _.is.String,
+    path: _.is.String,
 }
-
-/**
- */
-const parameterized = path => _.promise((self, done) => {
-    _.promise(self)
-        .add("path", path)
-        .then(parse)
-        .end(done, self, "fileId")
-})
+parse.params = {
+    path: _.p.normal,
+}
+parse.p = _.p(parse)
 
 /**
  *  API
  */
 exports.parse = parse;
-exports.parse.p = parameterized

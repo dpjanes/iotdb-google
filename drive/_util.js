@@ -1,9 +1,9 @@
 /*
- *  drive/parse_url.js
+ *  drive/_util.js
  *
  *  David Janes
  *  IOTDB.org
- *  2019-09-25
+ *  2020-03-08
  *
  *  Copyright (2013-2020) David P. Janes
  *
@@ -23,37 +23,35 @@
 "use strict"
 
 const _ = require("iotdb-helpers")
-const errors = require("iotdb-errors")
-
-const URL = require("url").URL
 
 /**
  */
-const parse_url = _.promise(self => {
-    _.promise.validate(self, parse_url)
-
-    const url = new URL(self.url)
-    const match = url.pathname.match(/.*\/d\/([^\/]*)/)
-    if (!match) {
-        return done(new errors.Invalid("did not understand URL"))
+const is_path = o => {
+    if (_.is.String(o)) {
+        return true
+    } else if (_.is.Dictionary(o) && _.is.String(o.id)) {
+        return true
+    } else {
+        return false
     }
-
-    self.path = match[1]
-})
-
-parse_url.method = "drive.parse_url"
-parse_url.requires = {
-    url: _.is.String,
 }
-parse_url.produces = {
-    path: _.is.String,
-}
-parse_url.params = {
-    url: _.p.normal,
-}
-parse_url.p = _.p(parse_url)
+is_path.method = "google.drive._util.is_path"
 
 /**
- *  API
  */
-exports.parse_url = parse_url;
+const normalize_path = o => {
+    if (_.is.String(o)) {
+        return o
+    } else if (_.is.Dictionary(o) && _.is.String(o.id)) {
+        return o.id
+    } else {
+        throw new Error(`not a path: ${o}`)
+    }
+}
+normalize_path.method = "google.drive._util.normalize_path"
+
+
+/**
+ */
+exports.is_path = is_path
+exports.normalize_path = normalize_path

@@ -1,5 +1,5 @@
 /*
- *  drive/file_export.js
+ *  drive/file.export.js
  *
  *  David Janes
  *  IOTDB.org
@@ -25,6 +25,8 @@
 const _ = require("iotdb-helpers")
 const errors = require("iotdb-errors")
 
+const _util = require("./_util")
+
 /**
  */
 const file_export = _.promise((self, done) => {
@@ -35,39 +37,30 @@ const file_export = _.promise((self, done) => {
     self.document_media_type = self.document_media_type || "text/html"
 
     self.google.drive.files.export({
-        fileId: self.fileId,
+        fileId: _util.normalize_path(self.path),
         mimeType: self.document_media_type,
     }, {
-        responseType: "stream"
     }, (error, response) => {
         if (error) {
             if (error.response && error.response.status) {
+                const message = _.d.first(error, "/response/data/error/message", "?")
                 return done(new errors.NotFound(
-                    `${error.response.status}: ${error.response.statusText || "?"} (${self.fileId})`, 
+                    `${error.response.status}: ${message} (${self.fileId})`, 
                     error.response.status))
             }
 
             return done(error)
         }
 
-        const buffers = []
+        self.document = response.data
 
-        response.data
-            .on("data", data => {
-                buffers.push(data.toString())
-            })
-            .on("end", () => {
-                self.document = buffers.join("")
-
-                done(null, self)
-            })
-            .on("error", error => done(error))
+        done(null, self)
     })
 })
 
 file_export.method = "drive.file.file_export"
 file_export.requires = {
-    fileId: _.is.String,
+    path: _util.is_path,
     google: {
         drive: _.is.Object,
     },
