@@ -23,6 +23,9 @@
 "use strict"
 
 const _ = require("iotdb-helpers")
+const errors = require("iotdb-errors")
+
+const URL = require("url").URL
 
 /**
  */
@@ -40,12 +43,20 @@ is_path.method = "google.drive._util.is_path"
 /**
  */
 const normalize_path = o => {
-    if (_.is.String(o)) {
+    if (_.is.AbsoluteURL(o)) {
+        const url = new URL(o)
+        const match = url.pathname.match(/.*\/d\/([^\/]*)/)
+        if (!match) {
+            throw new errors.Invalid(`did not understand URL: ${o}`)
+        }
+
+        return match[1]
+    } else if (_.is.String(o)) {
         return o
     } else if (_.is.Dictionary(o) && _.is.String(o.id)) {
         return o.id
     } else {
-        throw new Error(`not a path: ${o}`)
+        throw new errors.Invalid(`not a valid path: ${o}`)
     }
 }
 normalize_path.method = "google.drive._util.normalize_path"

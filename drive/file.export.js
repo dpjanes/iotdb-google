@@ -32,8 +32,6 @@ const _util = require("./_util")
 const file_export = _.promise((self, done) => {
     _.promise.validate(self, file_export)
 
-    const fs = require("fs")
-
     self.document_media_type = self.document_media_type || "text/html"
 
     self.google.drive.files.export({
@@ -69,22 +67,15 @@ file_export.accepts = {
     document_media_type: _.is.String,
 }
 file_export.produces = {
+    document: [ _.is.String, _.is.Buffer, ],
+    document_media_type: _.is.String,
 }
-
-/**
- */
-const parameterized = (path, document_media_type) => _.promise((self, done) => {
-    const google = require("..")
-
-    _.promise(self) 
-        .then(google.drive.parse.p(path || self.path || null))
-        .add("document_media_type", document_media_type || self.document_media_type || "text/html")
-        .then(file_export)
-        .end(done, self, "document,document_media_type")
-})
+file_export.params = {
+    path: _.p.normal,
+}
+file_export.p = _.p(file_export)
 
 /**
  *  API
  */
 exports.export = file_export
-exports.export.p = parameterized
