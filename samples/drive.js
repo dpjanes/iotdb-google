@@ -73,8 +73,6 @@ if (action("file.export")) {
         .then(google.auth.token)
         .then(google.drive.initialize)
         .then(google.drive.file.export.p(
-            // "1g-Pq14-cNWd-ovk2kowsZiDh7aBCWkiI",
-            // "https://docs.google.com/document/d/1vgWWtt4JEyNiGVGTs9tcOfRdZcg9UJGbIDWGNYpR0kc/edit",
             "https://docs.google.com/document/d/165UMz9PFdulLo1vqJwrRhul5WI2NvZcRSAOkGFN6VIs/edit",
             "text/html"
         ))
@@ -100,7 +98,6 @@ if (action("file.export")) {
 } else if (action("file.list")) {
     _.promise({
         googled: googled,
-        // path: "0ADQT7EhQqeq7Uk9PVA",
         path: "0ABWKoEjGzmq2Uk9PVA",
     })
         .then(google.initialize)
@@ -114,8 +111,6 @@ if (action("file.export")) {
 } else if (action("drive.list")) {
     _.promise({
         googled: googled,
-        // fileId: "0B5xFQ1qObEdbMjhhY2Q5Y2ItNzUzNC00MjgwLTllYzQtYWMxYzliODAxMWY1",
-        // https://drive.google.com/drive/u/0/folders/
     })
         .then(google.initialize)
         .then(google.auth.token)
