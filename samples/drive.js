@@ -120,6 +120,21 @@ if (action("file.export")) {
             console.log("+", sd.paths)
         })
         .catch(_error)
+} else if (action("permissions.get")) {
+    _.promise({
+        googled: googled,
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.drive.initialize)
+        .then(google.drive.permissions.get.p(
+            "1NPIuMTkz0nhx35jRyjvBGcGaycLuPANF",
+        ))
+        .make(sd => {
+            console.log("+", sd.document_name, sd.document_media_type, sd.document_length)
+            console.log("+", sd.document)
+        })
+        .catch(_error)
 } else if (!action_name) {
     console.log("#", "action required - should be one of:", actions.join(", "))
 } else {

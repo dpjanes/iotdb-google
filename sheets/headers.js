@@ -32,12 +32,16 @@ const headers = _.promise(self => {
     self.jsons = self.jsons
         .map(row => _.object(self.headers, row))
         .map(row => {
+            const nrow = self.google$params && self.google$params.paths ? {} : null
+
             _.mapObject(row, (value, key) => {
                 if (_.is.Undefined(value)) {
                     delete row[key]
+                } else if (nrow) {
+                    _.d.set(nrow, key, value)
                 }
             })
-            return row
+            return nrow || row
         })
 })
 
@@ -47,18 +51,15 @@ headers.requires = {
     headers: _.is.Array,
 }
 headers.accepts = {
+    google$params: _.is.Dictionary,
 }
 headers.produces = {
+    jsons: _.is.Array,
 }
-
-/**
- */
-const parameterized = headers => _.promise((self, done) => {
-    _.promise(self)
-        .add("headers", headers)
-        .then(headers)
-        .end(done, self, "jsons")
-})
+headers.params = {
+    google$params: _.p.normal,
+}
+headers.p = _.p(headers)
 
 /**
  */
@@ -83,14 +84,18 @@ first.requires = {
     jsons: _.is.Array,
 }
 first.accepts = {
+    google$params: _.is.Dictionary,
 }
 first.produces = {
     jsons: _.is.Array,
 }
+first.params = {
+    google$params: _.p.normal,
+}
+first.p = _.p(first)
 
 /**
  *  API
  */
 exports.headers = headers
-exports.headers.p = parameterized
 exports.headers.first = first

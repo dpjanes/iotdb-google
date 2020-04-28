@@ -43,3 +43,9 @@ module.exports.drive = Object.assign(
     require("./drive.list"),
     {},
 )
+
+module.exports.permissions = Object.assign(
+    {},
+    require("./permissions.get"),
+    {},
+)

@@ -40,7 +40,7 @@ const put = _.promise((self, done) => {
         },
     }
 
-    console.log("HERE:PUT", params.resource.values)
+    // console.log("HERE:PUT", params.resource.values)
 
     self.google.sheets.spreadsheets.values.update(params, (error, result) => {
         if (error) {
