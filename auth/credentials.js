@@ -29,13 +29,13 @@ const fs = require("iotdb-fs")
  */
 const credentials_read = _.promise((self, done) => {
     _.promise(self)
-        .then(fs.read.json.p(self.googled.credentials_path, null))
-        .end(done, self, "json:googled/credentials")
+        .then(fs.read.json.p(self.google$cfg.credentials_path, null))
+        .end(done, self, "json:google$cfg/credentials")
 })
 
 credentials_read.method = "auth.credentials.read"
 credentials_read.requires = {
-    googled: {
+    google$cfg: {
         credentials_path: _.is.String,
     },
 }
@@ -44,13 +44,13 @@ credentials_read.requires = {
  */
 const credentials_write = _.promise((self, done) => {
     _.promise(self)
-        .then(fs.write.json.p(self.googled.credentials_path, self.googled.credentials))
+        .then(fs.write.json.p(self.google$cfg.credentials_path, self.google$cfg.credentials))
         .end(done, self)
 })
 
 credentials_write.method = "auth.credentials.write"
 credentials_write.requires = {
-    googled: {
+    google$cfg: {
         credentials_path: _.is.String,
         credentials: _.is.Dictionary,
     },

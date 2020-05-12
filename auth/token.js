@@ -33,7 +33,7 @@ const google = require("googleapis")
 const token = _.promise(self => {
     _.promise.validate(self, token)
 
-    self.google.client.setCredentials(self.googled.token)
+    self.google.client.setCredentials(self.google$cfg.token)
 })
 
 token.method = "auth.token"
@@ -41,7 +41,7 @@ token.requires = {
     google: {
         client: _.is.Object,
     },
-    googled: {
+    google$cfg: {
         token: _.is.Dictionary,
     },
 }
@@ -50,13 +50,13 @@ token.requires = {
  */
 const token_read = _.promise((self, done) => {
     _.promise(self)
-        .then(fs.read.json.p(self.googled.token_path, null))
-        .end(done, self, "json:googled/token")
+        .then(fs.read.json.p(self.google$cfg.token_path, null))
+        .end(done, self, "json:google$cfg/token")
 })
 
 token_read.method = "auth.token.read"
 token_read.requires = {
-    googled: {
+    google$cfg: {
         token_path: _.is.String,
     },
 }
@@ -65,13 +65,13 @@ token_read.requires = {
  */
 const token_write = _.promise((self, done) => {
     _.promise(self)
-        .then(fs.write.json.p(self.googled.token_path, self.googled.token))
+        .then(fs.write.json.p(self.google$cfg.token_path, self.google$cfg.token))
         .end(done, self)
 })
 
 token_write.method = "auth.token.write"
 token_write.requires = {
-    googled: {
+    google$cfg: {
         token_path: _.is.String,
         token: _.is.Dictionary,
     },

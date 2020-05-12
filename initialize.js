@@ -27,7 +27,7 @@ const _ = require("iotdb-helpers")
 const assert = require("assert")
 
 /**
- *  Requires: self.googled
+ *  Requires: self.google$cfg
  *  Produces: self.google
  */
 const initialize = _.promise((self, done) => {
@@ -36,7 +36,7 @@ const initialize = _.promise((self, done) => {
     _.promise(self)
         .validate(initialize)
         .make(sd => {
-            const credentials = self.googled.credentials.installed
+            const credentials = self.google$cfg.credentials.installed
 
             sd.google = {
                 client: new google.auth.OAuth2(
@@ -51,7 +51,7 @@ const initialize = _.promise((self, done) => {
 
 initialize.method = "initialize"
 initialize.requires = {
-    googled: {
+    google$cfg: {
         credentials: _.is.Dictionary,
     }
 }

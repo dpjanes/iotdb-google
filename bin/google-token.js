@@ -142,7 +142,7 @@ if (ad.help) {
 
 _.promise({
     scopes: scopes,
-    googled: {
+    google$cfg: {
         token_path: ad.token,
     },
 })
@@ -152,13 +152,13 @@ _.promise({
             help("make sure to get credentials first")
         }
 
-        sd.googled.credentials = sd.json
+        sd.google$cfg.credentials = sd.json
     })
 
     // we don't need scopes if renewing
     .then(google.auth.token.read)
     .make(sd => {
-        if (sd.googled.token) {
+        if (sd.google$cfg.token) {
             return
         }
         

@@ -41,5 +41,6 @@ module.exports = Object.assign(
     require("./properties"),
     require("./sheets"),
     require("./title"),
+    require("./util"),
     {}
 )

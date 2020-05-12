@@ -40,9 +40,9 @@ const _handle_code = _.promise((self, done) => {
             return done(error)
         }
 
-        self.googled = Object.assign(
+        self.google$cfg = Object.assign(
             {},
-            self.googled || {},
+            self.google$cfg || {},
             {
                 token: token_response,
             }
@@ -57,7 +57,7 @@ _handle_code.requires = {
     code: _.is.String,
 }
 _handle_code.accepts = {
-    googled: _.is.Dictionary,
+    google$cfg: _.is.Dictionary,
 }
 
 /**
@@ -70,9 +70,9 @@ const _handle_token_refresh = rules => _.promise(self => {
         assert.ok(_.is.Dictionary(token_response), 
             `${_handle_token_refresh.method}: expected on(token_response) to create Object`)
 
-        self.googled = Object.assign(
+        self.google$cfg = Object.assign(
             {},
-            self.googled || {},
+            self.google$cfg || {},
             {
                 token: token_response,
             }
@@ -115,7 +115,7 @@ const interactive = rules => _.promise((self, done) => {
     _.promise(self)
         .validate(interactive)
         .then(rules.read)
-        .then(_.promise.bail.conditional(sd => sd.googled.token))
+        .then(_.promise.bail.conditional(sd => sd.google$cfg.token))
 
         .then(rules.prompt)
         .then(_handle_code)
@@ -125,7 +125,7 @@ const interactive = rules => _.promise((self, done) => {
 
         .then(_handle_token_refresh(rules))
         .then(google.auth.token)
-        .end(done, self, "googled")
+        .end(done, self, "google$cfg")
 })
 
 interactive.method = "token.interactive"

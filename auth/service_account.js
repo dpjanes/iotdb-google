@@ -32,7 +32,7 @@ const service_account = _.promise((self, done) => {
 
     _.promise(self)
         .validate(service_account)
-        .then(fs.read.json.p(self.googled.service_account_path))
+        .then(fs.read.json.p(self.google$cfg.service_account_path))
         .make((sd, sdone) => {
             const gkeys = sd.json
             const jwt_client = new google.auth.JWT(gkeys.client_email, null, gkeys.private_key, sd.scopes)
@@ -52,7 +52,7 @@ const service_account = _.promise((self, done) => {
 service_account.method = "auth.service_account"
 service_account.requires = {
     google: _.is.Dictionary,
-    googled: {
+    google$cfg: {
         service_account_path: _.is.String,
     },
     scopes: _.is.Array.of.String,

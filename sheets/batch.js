@@ -159,6 +159,10 @@ const _update = _.promise((self, done) => {
         console.log("-", batch.method, "request", JSON.stringify(self.google$requests, null, 2))
     }
 
+    if (!self.google$requests.length) {
+        return done(null, self)
+    }
+
     self.google.sheets.spreadsheets.batchUpdate({
         spreadsheetId: self.google$range.spreadsheetId,
         resource: {

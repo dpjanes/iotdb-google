@@ -33,8 +33,8 @@ let credentials
 let token
 
 try {
-    credentials = require("./credentials.json")
-    token = require("./token.json")
+    credentials = require("../.cfg/credentials.json")
+    token = require("../.cfg/token.json")
 } catch (x) {
     console.log("#", "use bin/google-token to get tokens first")
 }
@@ -59,7 +59,7 @@ const _error = error => {
     }
 }
 
-const googled = {
+const google$cfg = {
     credentials: credentials,
     token: token,
 }
@@ -67,7 +67,7 @@ const googled = {
 
 if (action("list-values-query")) {
     _.promise({
-        googled: googled,
+        google$cfg: google$cfg,
     })
         .then(google.initialize)
         .then(google.auth.token)
@@ -84,7 +84,7 @@ if (action("list-values-query")) {
         .catch(_error)
 } else if (action("list-path")) {
     _.promise({
-        googled: googled,
+        google$cfg: google$cfg,
     })
         .then(google.initialize)
         .then(google.auth.token)
@@ -98,7 +98,7 @@ if (action("list-values-query")) {
         .catch(_error)
 } else if (action("list-values-path")) {
     _.promise({
-        googled: googled,
+        google$cfg: google$cfg,
     })
         .then(google.initialize)
         .then(google.auth.token)
@@ -111,7 +111,7 @@ if (action("list-values-query")) {
         .catch(_error)
 } else if (action("append")) {
     _.promise({
-        googled: googled,
+        google$cfg: google$cfg,
         jsons: [ [ "A", "B", 1 ], ]
     })
         .then(google.initialize)
@@ -125,7 +125,7 @@ if (action("list-values-query")) {
         .catch(_error)
 } else if (action("find_replace_regex")) {
     _.promise({
-        googled: googled,
+        google$cfg: google$cfg,
     })
         .then(google.initialize)
         .then(google.auth.token)
@@ -138,7 +138,7 @@ if (action("list-values-query")) {
         .catch(_error)
 } else if (action("properties")) {
     _.promise({
-        googled: googled,
+        google$cfg: google$cfg,
     })
         .then(google.initialize)
         .then(google.auth.token)
@@ -151,7 +151,7 @@ if (action("list-values-query")) {
         .catch(_error)
 } else if (action("sheets")) {
     _.promise({
-        googled: googled,
+        google$cfg: google$cfg,
     })
         .then(google.initialize)
         .then(google.auth.token)
@@ -164,7 +164,7 @@ if (action("list-values-query")) {
         .catch(_error)
 } else if (action("parse")) {
     _.promise({
-        googled: googled,
+        google$cfg: google$cfg,
     })
         .then(google.initialize)
         .then(google.auth.token)
@@ -179,7 +179,7 @@ if (action("list-values-query")) {
         .catch(_error)
 } else if (action("title.set")) {
     _.promise({
-        googled: googled,
+        google$cfg: google$cfg,
     })
         .then(google.initialize)
         .then(google.auth.token)
@@ -192,7 +192,7 @@ if (action("list-values-query")) {
         .catch(_error)
 } else if (action("title.get")) {
     _.promise({
-        googled: googled,
+        google$cfg: google$cfg,
     })
         .then(google.initialize)
         .then(google.auth.token)
@@ -205,7 +205,7 @@ if (action("list-values-query")) {
         .catch(_error)
 } else if (action("cell.background")) {
     _.promise({
-        googled: googled,
+        google$cfg: google$cfg,
     })
         .then(google.initialize)
         .then(google.auth.token)
@@ -218,7 +218,7 @@ if (action("list-values-query")) {
         .catch(_error)
 } else if (action("cell.color")) {
     _.promise({
-        googled: googled,
+        google$cfg: google$cfg,
     })
         .then(google.initialize)
         .then(google.auth.token)
@@ -231,7 +231,7 @@ if (action("list-values-query")) {
         .catch(_error)
 } else if (action("style")) {
     _.promise({
-        googled: googled,
+        google$cfg: google$cfg,
     })
         .then(google.initialize)
         .then(google.auth.token)
@@ -245,7 +245,7 @@ if (action("list-values-query")) {
         .catch(_error)
 } else if (action("sheets.add")) {
     _.promise({
-        googled: googled,
+        google$cfg: google$cfg,
     })
         .then(google.initialize)
         .then(google.auth.token)
@@ -258,7 +258,7 @@ if (action("list-values-query")) {
         .catch(_error)
 } else if (action("batch")) {
     _.promise({
-        googled: googled,
+        google$cfg: google$cfg,
     })
         .then(google.initialize)
         .then(google.auth.token)

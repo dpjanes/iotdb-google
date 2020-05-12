@@ -57,7 +57,7 @@ if (require.main === module) {
         scopes: [
             "https://www.googleapis.com/auth/spreadsheets.readonly",
         ],
-        googled: {
+        google$cfg: {
             credentials_path: "./credentials.json",
             token_path: "./token.json",
         },

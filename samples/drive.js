@@ -59,7 +59,7 @@ const _error = error => {
     }
 }
 
-const googled = {
+const google$cfg = {
     credentials: credentials,
     token: token,
 }
@@ -67,7 +67,7 @@ const googled = {
 
 if (action("file.export")) {
     _.promise({
-        googled: googled,
+        google$cfg: google$cfg,
     })
         .then(google.initialize)
         .then(google.auth.token)
@@ -82,7 +82,7 @@ if (action("file.export")) {
         .catch(_error)
 } else if (action("file.get")) {
     _.promise({
-        googled: googled,
+        google$cfg: google$cfg,
     })
         .then(google.initialize)
         .then(google.auth.token)
@@ -97,7 +97,7 @@ if (action("file.export")) {
         .catch(_error)
 } else if (action("file.list")) {
     _.promise({
-        googled: googled,
+        google$cfg: google$cfg,
         path: "0ABWKoEjGzmq2Uk9PVA",
     })
         .then(google.initialize)
@@ -110,7 +110,7 @@ if (action("file.export")) {
         .catch(_error)
 } else if (action("drive.list")) {
     _.promise({
-        googled: googled,
+        google$cfg: google$cfg,
     })
         .then(google.initialize)
         .then(google.auth.token)
@@ -122,7 +122,7 @@ if (action("file.export")) {
         .catch(_error)
 } else if (action("permissions.get")) {
     _.promise({
-        googled: googled,
+        google$cfg: google$cfg,
     })
         .then(google.initialize)
         .then(google.auth.token)
