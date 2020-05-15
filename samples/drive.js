@@ -66,7 +66,33 @@ const google$cfg = {
 }
 
 
-if (action("file.export")) {
+if (action("parse.url")) {
+    _.promise({
+        google$cfg: google$cfg,
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.drive.initialize)
+        .then(google.drive.parse.p("https://docs.google.com/document/d/165UMz9PFdulLo1vqJwrRhul5WI2NvZcRSAOkGFN6VIs/edit"))
+        .make(sd => {
+            console.log("+", sd.path)
+        })
+        .catch(_error)
+} else if (action("parse.path")) {
+    _.promise({
+        google$cfg: google$cfg,
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.drive.initialize)
+        // .then(google.drive.parse.p("0ADfGktgHOUEPUk9PVA/Data/demo-bar"))
+        // .then(google.drive.parse.p("0ADfGktgHOUEPUk9PVA/XXX"))
+        .then(google.drive.parse.p("/Walkup/Data/demo-bar"))
+        .make(sd => {
+            console.log("+", sd.path)
+        })
+        .catch(_error)
+} else if (action("file.export")) {
     _.promise({
         google$cfg: google$cfg,
     })
@@ -99,7 +125,8 @@ if (action("file.export")) {
 } else if (action("file.list")) {
     _.promise({
         google$cfg: google$cfg,
-        path: "0ABWKoEjGzmq2Uk9PVA",
+        // path: "0ABWKoEjGzmq2Uk9PVA",
+        path: "0ADfGktgHOUEPUk9PVA/Data/demo-bar",
     })
         .then(google.initialize)
         .then(google.auth.token)

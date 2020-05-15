@@ -31,7 +31,21 @@ const parse = _.promise((self, done) => {
 
     _.promise(self)
         .validate(parse)
-        .conditional(_.is.AbsoluteURL(self.path), google.drive.parse_url.p(self.path))
+
+        .make(sd => {
+            if (_.is.AbsoluteURL(sd.path)) {
+                sd._op = "url"
+                sd.url = sd.path
+            } else if (self.path.indexOf("/") > -1) {
+                sd._op = "path"
+            } else {
+                sd._op = "asis"
+            }
+        })
+
+        .conditional(sd => sd._op === "url", google.drive.parse_url)
+        .conditional(sd => sd._op === "path", google.drive.parse_path)
+
         .end(done, self, parse)
 })
 

@@ -32,15 +32,17 @@ const _util = require("./_util")
 const file_list = _.promise((self, done) => {
     _.promise.validate(self, file_list)
 
-    const query = {}
+    const paramd = {}
     if (self.path) {
-        query.driveId = _util.normalize_path(self.path)
-        query.corpora = "drive"
-        query.includeItemsFromAllDrives = true
-        query.supportsAllDrives = true
+        paramd.driveId = _util.normalize_path(self.path)
+        paramd.corpora = "drive"
+        paramd.includeItemsFromAllDrives = true
+        paramd.supportsAllDrives = true
+
+        // paramd.q = "mimeType='application/vnd.google-apps.folder'"
     }
 
-    self.google.drive.files.list(query, {}, (error, response) => {
+    self.google.drive.files.list(paramd, {}, (error, response) => {
         if (error) {
             if (error.response && error.response.status) {
                 const message = _.d.first(error, "/response/data/error/message", "?")
@@ -55,8 +57,8 @@ const file_list = _.promise((self, done) => {
         self.paths = response.data.files
         self.google$result = response
         self.cursor = {
-            has_next: !!response.nextPageToken,
-            next: response.nextPageToken || null,
+            has_next: !!response.data.nextPageToken,
+            next: response.data.nextPageToken || null,
         }
 
         done(null, self)
