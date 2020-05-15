@@ -33,10 +33,11 @@ let credentials
 let token
 
 try {
-    credentials = require("./credentials.json")
-    token = require("./token.json")
+    credentials = require("../.cfg/credentials.json")
+    token = require("../.cfg/token.json")
 } catch (x) {
     console.log("#", "use bin/google-token to get tokens first")
+    process.exit(1)
 }
 
 
