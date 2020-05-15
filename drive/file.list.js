@@ -34,10 +34,12 @@ const file_list = _.promise((self, done) => {
 
     const paramd = {}
     if (self.path) {
-        paramd.driveId = _util.normalize_path(self.path)
-        paramd.corpora = "drive"
+        // paramd.driveId = _util.normalize_path(self.path)
+        // paramd.corpora = "drive"
         paramd.includeItemsFromAllDrives = true
         paramd.supportsAllDrives = true
+
+        paramd.q = `'${self.path}' in parents`
 
         // paramd.q = "mimeType='application/vnd.google-apps.folder'"
     }

@@ -29,6 +29,53 @@ const URL = require("path").URL
 
 /**
  */
+const _drive = _.promise((self, done) => {
+    const parts = self.path.split("/")
+    if (parts.length <= 1) {
+        throw new errors.Invalid("can't deal with /")
+    }
+
+    parts.shift()
+    const root = parts.shift()
+
+    const paramd = {
+        useDomainAdminAccess: true,
+        q: `name = '${root}'`,
+    }
+
+    self.google.drive.drives.list(paramd, (error, response) => {
+        if (error) {
+            if (error.response && error.response.status) {
+                return done(new errors.NotFound(
+                    `${error.response.status}: ${error.response.statusText || "?"} (${self.fileId})`, 
+                    error.response.status))
+            }
+
+            return done(error)
+        }
+
+        if (response.data.drives.length < 1) {
+            throw new errors.NotFound(`not found: ${root}`)
+        }
+
+        parts.unshift(response.data.drives[0].id)
+        self.path = parts.join("/")
+
+        done(null, self)
+    })
+})
+
+_drive.method = "drive.parse_path/_drive"
+_drive.description = ``
+_drive.requires = {
+}
+_drive.accepts = {
+}
+_drive.produces = {
+}
+
+/**
+ */
 const _next = _.promise((self, done) => {
     if (!self.parent) {
         return done(null, self)
@@ -36,8 +83,8 @@ const _next = _.promise((self, done) => {
 
     const paramd = {}
     if (self.path) {
-        // paramd.driveId = _util.normalize_path(self.path)
-        // paramd.corpora = "drive"
+        paramd.driveId = self.root
+        paramd.corpora = "drive"
         paramd.includeItemsFromAllDrives = true
         paramd.supportsAllDrives = true
         paramd.q = `'${self.parent}' in parents and name = '${self.name}'`
@@ -83,13 +130,11 @@ const parse_path = _.promise((self, done) => {
     _.promise(self)
         .validate(parse_path)
 
+        .conditional(sd => sd.path.startsWith("/"), _drive)
         .make(sd => {
             sd.finished = false
             sd.parts = sd.path.split("/")
             sd.parent = sd.parts.shift()
-            if (sd.parent === "") {
-                throw new errors.NotImplemented("can't deal with / paths yet")
-            }
             sd.root = sd.parent
         })
         .each({
@@ -115,9 +160,6 @@ const parse_path = _.promise((self, done) => {
             } else {
                 sd.path = sd.parents[sd.parents.length - 1]
             }
-
-            console.log("DONE", sd.path, sd.parts, sd.parents)
-            process.exit()
         })
 
         .end(done, self, parse_path)

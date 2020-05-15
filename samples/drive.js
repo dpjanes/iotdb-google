@@ -126,11 +126,12 @@ if (action("parse.url")) {
     _.promise({
         google$cfg: google$cfg,
         // path: "0ABWKoEjGzmq2Uk9PVA",
-        path: "0ADfGktgHOUEPUk9PVA/Data/demo-bar",
+        // path: "0ADfGktgHOUEPUk9PVA/Data/demo-bar",
     })
         .then(google.initialize)
         .then(google.auth.token)
         .then(google.drive.initialize)
+        .then(google.drive.parse.p("/Walkup/Data/demo-bar"))
         .then(google.drive.file.list)
         .make(sd => {
             console.log("+", sd.paths)
@@ -182,9 +183,8 @@ if (action("parse.url")) {
         .then(google.initialize)
         .then(google.auth.token)
         .then(google.drive.initialize)
-        .then(google.drive.permissions.get.p(
-            "1NPIuMTkz0nhx35jRyjvBGcGaycLuPANF",
-        ))
+        .then(google.drive.parse.p("/Walkup/Data/demo-bar"))
+        .then(google.drive.permissions.get)
         .make(sd => {
             console.log("+", sd.document_name, sd.document_media_type, sd.document_length)
             console.log("+", sd.document)
