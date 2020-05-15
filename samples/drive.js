@@ -118,7 +118,34 @@ if (action("file.export")) {
         .then(google.drive.initialize)
         .then(google.drive.drive.list)
         .make(sd => {
-            console.log("+", sd.paths)
+            sd.paths.sort((a, b) => _.is.unsorted(a.name, b.name))
+            sd.paths.forEach(path => {
+                console.log("+", path.id, path.name)
+            })
+
+            if (sd.cursor) {
+                console.log()
+                console.log("+", sd.cursor)
+            }
+        })
+        .catch(_error)
+} else if (action("drive.list.page")) {
+    _.promise({
+        google$cfg: google$cfg,
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.drive.initialize)
+        .page({
+            batch: google.drive.drive.list,
+            outputs: "paths",
+            output_selector: sd => sd.paths,
+        })
+        .make(sd => {
+            sd.paths.sort((a, b) => _.is.unsorted(a.name, b.name))
+            sd.paths.forEach(path => {
+                console.log("+", path.id, path.name)
+            })
         })
         .catch(_error)
 } else if (action("permissions.get")) {

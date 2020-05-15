@@ -30,9 +30,14 @@ const errors = require("iotdb-errors")
 const drive_list = _.promise((self, done) => {
     _.promise.validate(self, drive_list)
 
-    self.google.drive.drives.list({
-    }, {
-    }, (error, response) => {
+    const paramd = {
+        pageSize: 100,
+    }
+    if (self.pager) {
+        paramd.pageToken = self.pager
+    }
+
+    self.google.drive.drives.list(paramd, (error, response) => {
         if (error) {
             if (error.response && error.response.status) {
                 return done(new errors.NotFound(
@@ -46,8 +51,8 @@ const drive_list = _.promise((self, done) => {
         self.paths = response.data.drives
         self.google$result = response
         self.cursor = {
-            has_next: !!response.nextPageToken,
-            next: response.nextPageToken || null,
+            has_next: !!response.data.nextPageToken,
+            next: response.data.nextPageToken || null,
         }
 
         done(null, self)
