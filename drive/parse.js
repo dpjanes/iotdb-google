@@ -50,7 +50,13 @@ const parse = _.promise((self, done) => {
         .conditional(sd => sd._op === "url", google.drive.parse_url)
         .conditional(sd => sd._op === "path", google.drive.parse_path)
 
-        .end(done, self, parse)
+        .make(sd => {
+            if (sd._parse_variable) {
+                _.d.set(sd, sd._parse_variable, sd.path)
+            }
+        })
+
+        .end(done, self, `${self._parse_variable || "path"}`)
 })
 
 parse.method = "drive.parse"
@@ -61,16 +67,34 @@ parse.accepts = {
     path: {
         id: _.is.Dictionary,
     },
+    _parse_variable: _.is.String, // only use through parameterized
 }
 parse.produces = {
     path: _.is.String,
 }
-parse.params = {
-    path: _.p.normal,
+
+/**
+ */
+const parameterized = (_path, _parse_variable) => _.promise((self, done) => {
+    _.promise(self)
+        .validate(parameterized)
+
+        .add("path", _path || sd.path)
+        .add("_parse_variable", _parse_variable)
+        .then(parse)
+
+        .end(done, self, `${_parse_variable || "path"}`)
+})
+
+parameterized.method = "drive.parse.p"
+parameterized.description = ``
+parameterized.requires = {
 }
-parse.p = _.p(parse)
+parameterized.accepts = {
+}
 
 /**
  *  API
  */
-exports.parse = parse;
+exports.parse = parse
+exports.parse.p = parameterized

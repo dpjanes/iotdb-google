@@ -154,7 +154,7 @@ const parse_path = _.promise((self, done) => {
             } else if (sd.parents.length === 1) {
                 sd.path = sd.parents[0]
             } else if (_.is.Nullish(sd.parents[sd.parents.length - 2])) {
-                throw new errors.NotFound("folder not found")
+                throw new errors.NotFound("folder not found: " + self.path)
             } else if (_.is.Nullish(sd.parents[sd.parents.length - 1])) {
                 sd.path = `${sd.parents[sd.parents.length - 2]}/${sd.parts[sd.parents.length - 1]}`
             } else {

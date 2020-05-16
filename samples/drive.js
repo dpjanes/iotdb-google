@@ -147,6 +147,25 @@ if (action("parse.url")) {
             console.log("+", "done")
         })
         .catch(_error)
+} else if (action("file.copy")) {
+    _.promise({
+        google$cfg: google$cfg,
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.drive.initialize)
+
+        // source
+        .then(google.drive.parse.p("/Walkup/Data/demo-bar/demo-bar master"))
+
+        // destination
+        .then(google.drive.parse.p("/Walkup/xxx master", "destination"))
+
+        .then(google.drive.file.copy)
+        .make(sd => {
+            console.log("+", "done")
+        })
+        .catch(_error)
 } else if (action("drive.list")) {
     _.promise({
         google$cfg: google$cfg,

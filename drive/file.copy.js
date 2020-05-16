@@ -1,9 +1,9 @@
 /*
- *  drive/file.make.directory.js
+ *  drive/file.copy.js
  *
  *  David Janes
  *  IOTDB.org
- *  2020-05-15
+ *  2020-05-16
  *
  *  Copyright (2013-2020) David P. Janes
  *
@@ -29,24 +29,21 @@ const _util = require("./_util")
 
 /**
  */
-const file_make_directory = _.promise((self, done) => {
-    _.promise.validate(self, file_make_directory)
+const file_copy = _.promise((self, done) => {
+    _.promise.validate(self, file_copy)
 
-    const parts = self.path.split("/")
-    if (parts.length !== 2) {
-        throw new errors.Invalid("expected exactly two path components")
-    }
+    const source = _util.file_only(self.path)
+    const destination = _util.file_and_folder(self.destination)
 
     const resource = {
-        name: parts[1],
-        parents: [ parts[0] ],
-        mimeType: "application/vnd.google-apps.folder",
+        name: destination.file,
+        parents: [ destination.folder, ],
     };
 
-    self.google.drive.files.create({
+    self.google.drive.files.copy({
         supportsAllDrives: true,
         resource: resource,
-        fields: "id",
+        fileId: source.file,
     }, (error, response) => {
         if (error) {
             if (error.response && error.response.status) {
@@ -65,20 +62,20 @@ const file_make_directory = _.promise((self, done) => {
     })
 })
 
-file_make_directory.method = "drive.file.make.directory"
-file_make_directory.requires = {
+file_copy.method = "drive.file.copy"
+file_copy.requires = {
     google: {
         drive: _.is.Object,
     },
     path: _.is.String,
+    destination: _.is.String,
 }
-file_make_directory.accepts = {
-    path: _util.is_path,
+file_copy.accepts = {
 }
-file_make_directory.produces = {
+file_copy.produces = {
 }
 
 /**
  *  API
  */
-exports.directory = file_make_directory
+exports.copy = file_copy

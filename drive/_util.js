@@ -63,5 +63,36 @@ normalize_path.method = "google.drive._util.normalize_path"
 
 /**
  */
+const file_and_folder = p => {
+    const parts = p.split("/")
+    if (parts.length !== 2) {
+        throw new errors.Invalid("expected path to have folder component: " + p)
+    }
+
+    return {
+        folder: parts[0],
+        file: parts[1],
+    }
+}
+
+/**
+ */
+const file_only = p => {
+    const parts = p.split("/")
+    if (parts.length !== 1) {
+        throw new errors.Invalid("expected path to have single component: " + p)
+    }
+
+    return {
+        folder: null,
+        file: parts[0],
+    }
+}
+
+/**
+ */
 exports.is_path = is_path
 exports.normalize_path = normalize_path
+
+exports.file_and_folder = file_and_folder
+exports.file_only = file_only
