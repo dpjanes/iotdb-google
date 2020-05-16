@@ -1,9 +1,9 @@
 /*
- *  drive/file.export.js
+ *  drive/file.make.directory.js
  *
  *  David Janes
  *  IOTDB.org
- *  2019-09-25
+ *  2020-03-07
  *
  *  Copyright (2013-2020) David P. Janes
  *
@@ -29,59 +29,56 @@ const _util = require("./_util")
 
 /**
  */
-const file_export = _.promise((self, done) => {
-    _.promise.validate(self, file_export)
+const file_make_directory = _.promise((self, done) => {
+    _.promise.validate(self, file_make_directory)
 
-    self.document_media_type = self.document_media_type || "text/html"
+    const parts = self.path.split("/")
+    if (parts.length !== 2) {
+        throw new errors.Invalid("expected exactly two path components")
+    }
 
-    self.google.drive.files.export({
-        fileId: _util.normalize_path(self.path),
-        mimeType: self.document_media_type,
-    }, {
+    const resource = {
+        name: parts[1],
+        parents: [ parts[0] ],
+        mimeType: "application/vnd.google-apps.folder",
+    };
+
+    self.google.drive.files.create({
+        supportsAllDrives: true,
+        resource: resource,
+        fields: "id",
     }, (error, response) => {
         if (error) {
             if (error.response && error.response.status) {
                 const message = _.d.first(error, "/response/data/error/message", "?")
                 return done(new errors.NotFound(
-                    `${error.response.status}: ${message} (${self.fileId})`, 
+                    `${error.response.status}: ${message} (${self.path})`, 
                     error.response.status))
             }
 
             return done(error)
         }
 
-        self.document = response.data
+        self.google$result = response
 
         done(null, self)
     })
 })
 
-file_export.method = "drive.file.export"
-file_export.requires = {
-    /*
-    path: _util.is_path,
-     */
-    path: _.is.String,
+file_make_directory.method = "drive.file.make.directory"
+file_make_directory.requires = {
     google: {
         drive: _.is.Object,
     },
+    path: _.is.String,
 }
-file_export.accepts = {
-    document_media_type: _.is.String,
+file_make_directory.accepts = {
+    path: _util.is_path,
 }
-file_export.produces = {
-    document: [ _.is.String, _.is.Buffer, ],
-    document_media_type: _.is.String,
+file_make_directory.produces = {
 }
-
-/*
-file_export.params = {
-    path: _.p.normal,
-}
-file_export.p = _util.p(file_export)
-*/
 
 /**
  *  API
  */
-exports.export = file_export
+exports.directory = file_make_directory

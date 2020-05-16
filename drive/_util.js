@@ -61,7 +61,6 @@ const normalize_path = o => {
 }
 normalize_path.method = "google.drive._util.normalize_path"
 
-
 /**
  */
 exports.is_path = is_path

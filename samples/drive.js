@@ -99,10 +99,8 @@ if (action("parse.url")) {
         .then(google.initialize)
         .then(google.auth.token)
         .then(google.drive.initialize)
-        .then(google.drive.file.export.p(
-            "https://docs.google.com/document/d/165UMz9PFdulLo1vqJwrRhul5WI2NvZcRSAOkGFN6VIs/edit",
-            "text/html"
-        ))
+        .then(google.drive.parse.p("https://docs.google.com/document/d/165UMz9PFdulLo1vqJwrRhul5WI2NvZcRSAOkGFN6VIs/edit"))
+        .then(google.drive.file.export)
         .make(sd => {
             console.log("+", sd.document)
         })
@@ -114,9 +112,8 @@ if (action("parse.url")) {
         .then(google.initialize)
         .then(google.auth.token)
         .then(google.drive.initialize)
-        .then(google.drive.file.get.p(
-            "1NPIuMTkz0nhx35jRyjvBGcGaycLuPANF",
-        ))
+        .then(google.drive.parse.p("1NPIuMTkz0nhx35jRyjvBGcGaycLuPANF"))
+        .then(google.drive.file.get)
         .make(sd => {
             console.log("+", sd.document_name, sd.document_media_type, sd.document_length)
             console.log("+", sd.document)
@@ -135,6 +132,19 @@ if (action("parse.url")) {
         .then(google.drive.file.list)
         .make(sd => {
             console.log("+", sd.paths)
+        })
+        .catch(_error)
+} else if (action("file.make.directory")) {
+    _.promise({
+        google$cfg: google$cfg,
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.drive.initialize)
+        .then(google.drive.parse.p("/Walkup/Data/" + _.timestamp.make()))
+        .then(google.drive.file.make.directory)
+        .make(sd => {
+            console.log("+", "done")
         })
         .catch(_error)
 } else if (action("drive.list")) {

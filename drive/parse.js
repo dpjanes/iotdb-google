@@ -33,6 +33,10 @@ const parse = _.promise((self, done) => {
         .validate(parse)
 
         .make(sd => {
+            if (_.is.Dictionary(sd.path) && sd.path.id) {
+                sd.path = sd.id
+            }
+
             if (_.is.AbsoluteURL(sd.path)) {
                 sd._op = "url"
                 sd.url = sd.path
@@ -51,7 +55,12 @@ const parse = _.promise((self, done) => {
 
 parse.method = "drive.parse"
 parse.requires = {
-    path: _.is.String,
+    path: [ _.is.String, _.is.Dictionary ],
+}
+parse.accepts = {
+    path: {
+        id: _.is.Dictionary,
+    },
 }
 parse.produces = {
     path: _.is.String,

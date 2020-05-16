@@ -81,7 +81,10 @@ file_get.description = `
     file.get does. We've made the naming more 
     consistent with IOTDB`
 file_get.requires = {
+    /*
     path: _util.is_path,
+     */
+    path: _.is.String,
     google: {
         drive: _.is.Object,
     },
@@ -94,10 +97,12 @@ file_get.produces = {
     document_name: _.is.String,
     document_length: _.is.Integer,
 }
+/*
 file_get.params = {
     path: _.p.normal,
 }
 file_get.p = _.p(file_get)
+*/
 
 /**
  *  API

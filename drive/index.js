@@ -39,6 +39,12 @@ module.exports.file = Object.assign(
     {},
 )
 
+module.exports.file.make = Object.assign(
+    {},
+    require("./file.make.directory"),
+    {},
+)
+
 module.exports.drive = Object.assign(
     {},
     require("./drive.list"),
