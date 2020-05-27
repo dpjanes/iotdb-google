@@ -1,9 +1,9 @@
 /*
- *  index.js
+ *  docs/index.js
  *
  *  David Janes
  *  IOTDB.org
- *  2018-07-28
+ *  2020-05-27
  *
  *  Copyright (2013-2020) David P. Janes
  *
@@ -22,10 +22,37 @@
 
 "use strict"
 
-exports.initialize = require("./initialize").initialize
+const _ = require("iotdb-helpers")
 
-exports.auth = require("./auth")
-exports.docs = require("./docs")
-exports.sheets = require("./sheets")
-exports.chat = require("./chat")
-exports.drive = require("./drive")
+/**
+ */
+const initialize = _.promise(self => {
+    _.promise.validate(self, initialize)
+
+    const google = require("googleapis").google
+
+    self.google = _.d.clone(self.google)
+    self.google.docs = google.docs({
+        version: "v1",
+        auth: self.google.client
+    })
+})
+
+initialize.method = "sheets.initialize"
+initialize.requires = {
+    google: {
+        client: _.is.Object,
+    },
+}
+initialize.accepts = {
+}
+initialize.produces = {
+    google: {
+        docs: _.is.Object,
+    },
+}
+
+/**
+ *  API
+ */
+exports.initialize = initialize

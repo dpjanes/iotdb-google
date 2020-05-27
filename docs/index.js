@@ -1,9 +1,9 @@
 /*
- *  index.js
+ *  docs/index.js
  *
  *  David Janes
  *  IOTDB.org
- *  2018-07-28
+ *  2020-05-27
  *
  *  Copyright (2013-2020) David P. Janes
  *
@@ -20,12 +20,10 @@
  *  limitations under the License.
  */
 
-"use strict"
+"use strict";
 
-exports.initialize = require("./initialize").initialize
-
-exports.auth = require("./auth")
-exports.docs = require("./docs")
-exports.sheets = require("./sheets")
-exports.chat = require("./chat")
-exports.drive = require("./drive")
+module.exports = Object.assign(
+    {},
+    require("./initialize"),
+    {}
+)

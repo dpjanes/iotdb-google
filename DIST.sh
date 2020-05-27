@@ -38,6 +38,7 @@ echo "=================="
         *.js \
         auth/*.js \
         chat/*.js \
+        docs/*.js \
         drive/*.js \
         sheets/*.js \
         |
