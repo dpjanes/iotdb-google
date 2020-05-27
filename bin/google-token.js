@@ -5,7 +5,7 @@
  *  IOTDB.org
  *  2018-07-30
  *
- *  Copyright [2013-2018] [David P. Janes]
+ *  Copyright (2013-2020) David P. Janes
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -79,6 +79,14 @@ const ad = minimist(process.argv.slice(2), {
 
 const scopes = []
 
+if (ad.docs) {
+    if (ad.write) {
+        scopes.push("https://www.googleapis.com/auth/documents")
+    } else {
+        scopes.push("https://www.googleapis.com/auth/documents.readonly")
+    }
+}
+
 if (ad.sheets) {
     if (ad.write) {
         scopes.push("https://www.googleapis.com/auth/spreadsheets")
@@ -126,6 +134,8 @@ const help = message => {
     console.log("")
     console.log("Service Options:")
     console.log("--sheets                  access Google Sheets (default read-only)")
+    console.log("--docs                    access Google Docs (default read-only)")
+    console.log("--drive                   access Google Drive (default read-only)")
     console.log("")
     console.log("--write                   request write access also")
     console.log("")
