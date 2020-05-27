@@ -20,10 +20,12 @@
  *  limitations under the License.
  */
 
-"use strict";
+"use strict"
 
-module.exports = Object.assign(
-    {},
+const _ = require("iotdb-helpers")
+
+module.exports = _.d.compose.deep(
     require("./initialize"),
-    {}
+    require("./fetch"),
+    require("./batch.execute"),
 )

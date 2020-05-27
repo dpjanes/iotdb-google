@@ -75,6 +75,63 @@ if (action("initialize")) {
             console.log("+", "done")
         })
         .catch(_error)
+} else if (action("fetch")) {
+    _.promise({
+        google$cfg: google$cfg,
+        path: "1yNUi2h9TnQTIQfTEq-HWTe5XcE5GS-VPnf0B8i6ViDY",
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.docs.initialize)
+        .then(google.docs.fetch)
+        .make(sd => {
+            console.log("+", "done", JSON.stringify(sd.google$doc, null, 2))
+        })
+        .catch(_error)
+} else if (action("find-replace")) {
+    _.promise({
+        google$cfg: google$cfg,
+        path: "1yNUi2h9TnQTIQfTEq-HWTe5XcE5GS-VPnf0B8i6ViDY",
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.docs.initialize)
+        .make(sd => {
+            sd.google$requests = [
+                {
+                  replaceAllText: {
+                    containsText: {
+                      text: 'RESTAURANT_NAME',
+                      matchCase: true,
+                    },
+                    replaceText: "David's Restaurant",
+                  },
+                },
+            ]
+        })
+        .then(google.docs.batch.execute)
+        /*
+        .make((sd, sdone) => {
+            let requests = [
+            ];
+
+            sd.google.docs.documents.batchUpdate(
+                    {
+                      documentId: sd.path,
+                      resource: {
+                        requests,
+                      },
+                    },
+                    (err, {data}) => {
+                      if (err) return console.log('The API returned an error: ' + err);
+                      console.log(data);
+                    });
+        })
+        */
+        .make(sd => {
+            console.log("+", "done", JSON.stringify(sd.google$doc, null, 2))
+        })
+        .catch(_error)
 } else if (!action_name) {
     console.log("#", "action required - should be one of:", actions.join(", "))
 } else {
