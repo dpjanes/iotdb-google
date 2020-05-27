@@ -43,7 +43,7 @@ batch.execute = _.promise((self, done) => {
                     return sdone(error)
                 }
 
-                sd.google$result = result
+                sd.google$result = result.data
                 sd.google$requests = []
 
                 sdone(null, sd)

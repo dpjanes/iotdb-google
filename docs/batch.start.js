@@ -1,5 +1,5 @@
 /*
- *  docs/index.js
+ *  docs/batch.start.js
  *
  *  David Janes
  *  IOTDB.org
@@ -24,10 +24,25 @@
 
 const _ = require("iotdb-helpers")
 
-module.exports = _.d.compose.deep(
-    require("./initialize"),
-    require("./fetch"),
-    require("./batch.add"),
-    require("./batch.execute"),
-    require("./batch.start"),
-)
+/**
+ */
+const batch = {}
+batch.start = _.promise(self => {
+    _.promise.validate(self, batch.start)
+
+    self.google$requests = []
+})
+
+batch.start.method = "docs.batch.start"
+batch.start.requires = {
+}
+batch.start.accepts = {
+}
+batch.start.produces = {
+    google$requests: _.is.Array,
+}
+
+/**
+ *  API
+ */
+exports.batch = batch

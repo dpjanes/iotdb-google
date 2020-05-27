@@ -96,40 +96,21 @@ if (action("initialize")) {
         .then(google.initialize)
         .then(google.auth.token)
         .then(google.docs.initialize)
-        .make(sd => {
-            sd.google$requests = [
-                {
-                  replaceAllText: {
-                    containsText: {
-                      text: 'RESTAURANT_NAME',
-                      matchCase: true,
-                    },
-                    replaceText: "David's Restaurant",
-                  },
-                },
-            ]
-        })
-        .then(google.docs.batch.execute)
-        /*
-        .make((sd, sdone) => {
-            let requests = [
-            ];
 
-            sd.google.docs.documents.batchUpdate(
-                    {
-                      documentId: sd.path,
-                      resource: {
-                        requests,
-                      },
-                    },
-                    (err, {data}) => {
-                      if (err) return console.log('The API returned an error: ' + err);
-                      console.log(data);
-                    });
-        })
-        */
+        .then(google.docs.batch.start)
+        .then(google.docs.batch.add.p({
+            replaceAllText: {
+                containsText: {
+                    text: 'RESTAURANT_NAME',
+                    matchCase: true,
+                },
+                replaceText: "David's Restaurant",
+            },
+        }))
+        .then(google.docs.batch.execute)
+
         .make(sd => {
-            console.log("+", "done", JSON.stringify(sd.google$doc, null, 2))
+            console.log("+", "done", JSON.stringify(sd.google$result, null, 2))
         })
         .catch(_error)
 } else if (!action_name) {
