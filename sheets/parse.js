@@ -30,15 +30,28 @@ const errors = require("iotdb-errors")
 const parse = _.promise((self, done) => {
     const google = require("..")
 
+    _.promise.validate(self, parse)
+
+    let parser
+    if (!_.is.String(self.path)) {
+        parser = null
+    } else if (_.is.AbsoluteURL(self.path)) {
+        parser = google.sheets.parse_url
+    } else if (self.path.startsWith("/")) {
+        parser = google.sheets.parse_path
+    } else if (self.path.length > 40) {
+        parser = google.sheets.parse_path
+    } else {
+        parser = google.sheets.parse_range
+    }
+
     _.promise(self)
-        .validate(parse)
         .add({
             url: self.path,
             range: self.path,
+            google$range: null,
         })
-        .conditional(_.is.AbsoluteURL(self.path), google.sheets.parse_url)
-        .conditional(self.path.startsWith("/"), google.sheets.parse_path)
-        .conditional(self.path.indexOf("/") === -1, google.sheets.parse_range)
+        .then(parser)
         .end(done, self, "google$range")
 })
 
