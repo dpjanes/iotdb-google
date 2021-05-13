@@ -77,6 +77,31 @@ if (action("labels.list")) {
             // console.log("+", sd.path)
         })
         .catch(_error)
+} else if (action("messages.list")) {
+    _.promise({
+        google$cfg: google$cfg,
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.gmail.initialize)
+        .then(google.gmail.messages.list)
+        .make(sd => {
+            // console.log("+", sd.path)
+        })
+        .catch(_error)
+} else if (action("messages.get")) {
+    _.promise({
+        google$cfg: google$cfg,
+        message: "17961b3ec2c94c73",
+    })
+        .then(google.initialize)
+        .then(google.auth.token)
+        .then(google.gmail.initialize)
+        .then(google.gmail.messages.get)
+        .make(sd => {
+            console.log("+", JSON.stringify(sd.message, null, 2))
+        })
+        .catch(_error)
 } else if (!action_name) {
     console.log("#", "action required - should be one of:", actions.join(", "))
 } else {

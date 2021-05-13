@@ -34,22 +34,9 @@ module.exports.labels = Object.assign(
     {},
 )
 
-/*
-module.exports.file.make = Object.assign(
+module.exports.messages = Object.assign(
     {},
-    require("./file.make.directory"),
-    {},
-)
-
-module.exports.gmail = Object.assign(
-    {},
-    require("./gmail.list"),
+    require("./messages.list"),
+    require("./messages.get"),
     {},
 )
-
-module.exports.permissions = Object.assign(
-    {},
-    require("./permissions.get"),
-    {},
-)
-*/
