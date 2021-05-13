@@ -1,9 +1,9 @@
 /*
- *  samples/docs.js
+ *  samples/gmail.js
  *
  *  David Janes
  *  IOTDB.org
- *  2020-05-27
+ *  2021-05-13
  *
  *  Copyright (2013-2021) David P. Janes
  *
@@ -37,6 +37,7 @@ try {
     token = require("../.cfg/token.json")
 } catch (x) {
     console.log("#", "use bin/google-token to get tokens first")
+    process.exit(1)
 }
 
 
@@ -64,53 +65,16 @@ const google$cfg = {
     token: token,
 }
 
-if (action("initialize")) {
+if (action("labels.list")) {
     _.promise({
         google$cfg: google$cfg,
     })
         .then(google.initialize)
         .then(google.auth.token)
-        .then(google.docs.initialize)
+        .then(google.gmail.initialize)
+        .then(google.gmail.labels.list)
         .make(sd => {
-            console.log("+", "done")
-        })
-        .catch(_error)
-} else if (action("fetch")) {
-    _.promise({
-        google$cfg: google$cfg,
-        path: "1yNUi2h9TnQTIQfTEq-HWTe5XcE5GS-VPnf0B8i6ViDY",
-    })
-        .then(google.initialize)
-        .then(google.auth.token)
-        .then(google.docs.initialize)
-        .then(google.docs.fetch)
-        .make(sd => {
-            console.log("+", "done", JSON.stringify(sd.google$doc, null, 2))
-        })
-        .catch(_error)
-} else if (action("find-replace")) {
-    _.promise({
-        google$cfg: google$cfg,
-        path: "1yNUi2h9TnQTIQfTEq-HWTe5XcE5GS-VPnf0B8i6ViDY",
-    })
-        .then(google.initialize)
-        .then(google.auth.token)
-        .then(google.docs.initialize)
-
-        .then(google.docs.batch.start)
-        .then(google.docs.batch.add.p({
-            replaceAllText: {
-                containsText: {
-                    text: 'RESTAURANT_NAME',
-                    matchCase: true,
-                },
-                replaceText: "David's Restaurant",
-            },
-        }))
-        .then(google.docs.batch.execute)
-
-        .make(sd => {
-            console.log("+", "done", JSON.stringify(sd.google$result, null, 2))
+            // console.log("+", sd.path)
         })
         .catch(_error)
 } else if (!action_name) {

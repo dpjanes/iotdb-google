@@ -1,9 +1,9 @@
 /*
- *  index.js
+ *  gmail/index.js
  *
  *  David Janes
  *  IOTDB.org
- *  2018-07-28
+ *  2021-05-13
  *
  *  Copyright (2013-2021) David P. Janes
  *
@@ -22,11 +22,34 @@
 
 "use strict"
 
-exports.initialize = require("./initialize").initialize
+module.exports = Object.assign(
+    {},
+    require("./initialize"),
+    {}
+)
 
-exports.auth = require("./auth")
-exports.docs = require("./docs")
-exports.sheets = require("./sheets")
-exports.chat = require("./chat")
-exports.drive = require("./drive")
-exports.gmail = require("./gmail")
+module.exports.labels = Object.assign(
+    {},
+    require("./labels.list"),
+    {},
+)
+
+/*
+module.exports.file.make = Object.assign(
+    {},
+    require("./file.make.directory"),
+    {},
+)
+
+module.exports.gmail = Object.assign(
+    {},
+    require("./gmail.list"),
+    {},
+)
+
+module.exports.permissions = Object.assign(
+    {},
+    require("./permissions.get"),
+    {},
+)
+*/

@@ -1,11 +1,11 @@
 /*
- *  index.js
+ *  gmail/initialize.js
  *
  *  David Janes
  *  IOTDB.org
- *  2018-07-28
+ *  2021-05-13
  *
- *  Copyright (2013-2021) David P. Janes
+ *  Copyright (2013-2020) David P. Janes
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,11 +22,34 @@
 
 "use strict"
 
-exports.initialize = require("./initialize").initialize
+const _ = require("iotdb-helpers")
 
-exports.auth = require("./auth")
-exports.docs = require("./docs")
-exports.sheets = require("./sheets")
-exports.chat = require("./chat")
-exports.drive = require("./drive")
-exports.gmail = require("./gmail")
+/**
+ */
+const initialize = _.promise(self => {
+    _.promise.validate(self, initialize)
+
+    const google = require("googleapis").google
+
+    self.google = _.d.clone(self.google)
+    self.google.gmail = google.gmail({
+        version: "v1",
+        auth: self.google.client
+    });
+})
+
+initialize.method = "gmail.initialize"
+initialize.requires = {
+    google: {
+        client: _.is.Object,
+    },
+}
+initialize.accepts = {
+}
+initialize.produces = {
+}
+
+/**
+ *  API
+ */
+exports.initialize = initialize

@@ -67,6 +67,7 @@ const ad = minimist(process.argv.slice(2), {
         "sheets",
         "write",
         "drive",
+        "gmail",
     ],
     string: [
         "scope",
@@ -103,6 +104,14 @@ if (ad.drive) {
     }
 }
 
+if (ad.gmail) {
+    if (ad.write) {
+        scopes.push("https://www.googleapis.com/auth/gmail")
+    } else {
+        scopes.push("https://www.googleapis.com/auth/gmail.readonly")
+    }
+}
+
 if (ad.scope) {
     _.coerce.list(ad.scope).forEach(scope => {
         if (_.is.AbsoluteURL(scope)) {
@@ -136,6 +145,7 @@ const help = message => {
     console.log("--sheets                  access Google Sheets (default read-only)")
     console.log("--docs                    access Google Docs (default read-only)")
     console.log("--drive                   access Google Drive (default read-only)")
+    console.log("--gmail                   access GMail (default read-only)")
     console.log("")
     console.log("--write                   request write access also")
     console.log("")
